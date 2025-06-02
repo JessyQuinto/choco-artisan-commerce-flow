@@ -6,6 +6,7 @@ const FeaturedProducts = () => {
     {
       id: 1,
       name: "Canasta Werregue Tradicional",
+      slug: "canasta-werregue-tradicional",
       price: 145000,
       image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=600&q=80",
       description: "Hermosa canasta tejida con fibra de werregue, técnica ancestral transmitida de generación en generación.",
@@ -15,6 +16,7 @@ const FeaturedProducts = () => {
     {
       id: 2,
       name: "Máscara Ceremonial Tallada",
+      slug: "mascara-ceremonial-tallada",
       price: 220000,
       image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
       description: "Máscara tallada en madera de cativo, utilizada en ceremonias tradicionales del Pacífico.",
@@ -24,6 +26,7 @@ const FeaturedProducts = () => {
     {
       id: 3,
       name: "Collar de Semillas Nativas",
+      slug: "collar-semillas-nativas",
       price: 85000,
       image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80",
       description: "Collar elaborado con semillas de la selva chocoana, diseño contemporáneo con raíces ancestrales.",
@@ -33,6 +36,7 @@ const FeaturedProducts = () => {
     {
       id: 4,
       name: "Tambor Currulao Artesanal",
+      slug: "tambor-currulao-artesanal",
       price: 180000,
       image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",
       description: "Tambor tradicional para currulao, construido con maderas nativas y cuero de res curtido.",
@@ -62,7 +66,7 @@ const FeaturedProducts = () => {
 
         <div className="text-center mt-12">
           <a
-            href="#tienda"
+            href="/shop"
             className="inline-flex items-center px-8 py-4 bg-selva-600 hover:bg-selva-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             Ver Todos los Productos

@@ -17,24 +17,26 @@ const Header = () => {
               <span className="text-white font-bold text-lg">C</span>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-choco-800">Chocó Artesanal</h1>
+              <h1 className="text-xl font-bold text-choco-800">
+                <a href="/">Chocó Artesanal</a>
+              </h1>
               <p className="text-xs text-choco-600 hidden sm:block">Tesoros del Pacífico</p>
             </div>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
+            <a href="/" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
               Inicio
             </a>
-            <a href="#tienda" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
+            <a href="/shop" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
               Tienda
             </a>
             <a href="#historias" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
               Historias
             </a>
             <a href="#nosotros" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
-              Nosotros
+              Sobre Nosotros
             </a>
             <a href="#contacto" className="text-choco-700 hover:text-selva-600 font-medium transition-colors">
               Contacto
@@ -49,13 +51,15 @@ const Header = () => {
             <Button variant="ghost" size="sm">
               <User className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="relative">
-              <ShoppingCart className="h-4 w-4" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-oro-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+            <Button variant="ghost" size="sm" className="relative" asChild>
+              <a href="/cart">
+                <ShoppingCart className="h-4 w-4" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-oro-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+              </a>
             </Button>
             <Button
               variant="ghost"
@@ -72,17 +76,17 @@ const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden border-t border-choco-200 py-4">
             <nav className="flex flex-col space-y-2">
-              <a href="#" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
+              <a href="/" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
                 Inicio
               </a>
-              <a href="#tienda" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
+              <a href="/shop" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
                 Tienda
               </a>
               <a href="#historias" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
                 Historias
               </a>
               <a href="#nosotros" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
-                Nosotros
+                Sobre Nosotros
               </a>
               <a href="#contacto" className="text-choco-700 hover:text-selva-600 font-medium py-2 transition-colors">
                 Contacto

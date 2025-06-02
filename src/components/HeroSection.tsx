@@ -31,8 +31,9 @@ const HeroSection = () => {
               <Button 
                 size="lg" 
                 className="bg-selva-600 hover:bg-selva-700 text-white px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+                asChild
               >
-                Explorar Tienda
+                <a href="/shop">Explorar Tienda</a>
               </Button>
               <Button 
                 variant="outline" 

@@ -5,6 +5,7 @@ import { ShoppingCart } from "lucide-react";
 interface Product {
   id: number;
   name: string;
+  slug: string;
   price: number;
   image: string;
   description: string;
@@ -17,14 +18,23 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // TODO: Implement add to cart functionality
+    console.log(`Adding product ${product.id} to cart`);
+    alert(`¡${product.name} añadido al carrito!`);
+  };
+
   return (
     <div className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-choco-100 overflow-hidden">
       <div className="relative overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-        />
+        <a href={`/product-detail?slug=${product.slug}`}>
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+        </a>
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-xs font-semibold text-selva-700">
           {product.origin}
         </div>
@@ -33,9 +43,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
       <div className="p-6 space-y-4">
         <div>
-          <h3 className="font-bold text-lg text-choco-800 group-hover:text-selva-700 transition-colors">
-            {product.name}
-          </h3>
+          <a href={`/product-detail?slug=${product.slug}`}>
+            <h3 className="font-bold text-lg text-choco-800 group-hover:text-selva-700 transition-colors">
+              {product.name}
+            </h3>
+          </a>
           <p className="text-sm text-choco-600 line-clamp-2 mt-1">
             {product.description}
           </p>
@@ -50,6 +62,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
           <Button 
             size="sm" 
+            onClick={handleAddToCart}
             className="bg-oro-500 hover:bg-oro-600 text-white flex items-center space-x-2 rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             <ShoppingCart className="h-4 w-4" />
