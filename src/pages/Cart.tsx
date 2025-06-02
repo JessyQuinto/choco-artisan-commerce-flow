@@ -208,7 +208,9 @@ const Cart = () => {
                 <Checkbox
                   id="terms"
                   checked={acceptTerms}
-                  onCheckedChange={setAcceptTerms}
+                  onCheckedChange={(checked) => {
+                    setAcceptTerms(checked === true);
+                  }}
                 />
                 <label htmlFor="terms" className="text-sm text-choco-600 leading-relaxed cursor-pointer">
                   Acepto los{" "}
