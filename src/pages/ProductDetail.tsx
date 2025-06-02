@@ -1,277 +1,204 @@
-
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { ArrowUp, ArrowDown, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { Star, ShoppingCart, Truck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
-import { Button } from "@/components/ui/button";
-
-interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image: string;
-  description: string;
-  artisan: string;
-  origin: string;
-  category_id: number;
-  materials: string;
-  dimensions: string;
-  care_instructions: string;
-  artisan_story: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
 
 const ProductDetail = () => {
-  const [searchParams] = useSearchParams();
-  const productSlug = searchParams.get('slug');
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [category, setCategory] = useState<Category | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(true);
 
-  // Mock data
-  const mockProducts: Product[] = [
-    {
-      id: 1,
-      name: "Canasta Werregue Tradicional",
-      slug: "canasta-werregue-tradicional",
-      price: 145000,
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=600&q=80",
-      description: "Hermosa canasta tejida con fibra de werregue, técnica ancestral transmitida de generación en generación. Esta pieza representa siglos de tradición artesanal del Pacífico colombiano.",
-      artisan: "María Eugenia Rentería",
-      origin: "Chocó, Colombia",
-      category_id: 1,
-      materials: "Fibra de werregue natural",
-      dimensions: "25cm x 30cm x 15cm",
-      care_instructions: "Limpiar con paño húmedo, evitar exposición directa al sol",
-      artisan_story: "María Eugenia ha dedicado más de 30 años al arte del tejido con werregue. Aprendió esta técnica de su abuela, quien a su vez la heredó de generaciones anteriores. Cada canasta que crea lleva consigo la sabiduría ancestral de su pueblo y el amor por preservar las tradiciones afrocolombianas."
-    },
+  const mockProduct = {
+    id: 1,
+    name: "Canasta Werregue Tradicional",
+    slug: "canasta-werregue-tradicional",
+    price: 145000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBFaUMzL0TJ3ftO-Z9NP77vsHxLxWz8xqypo9txaRXzBkKEJA-6B0kNc9RmimWHtg5DYe0bR9z4VK4dwwJQ_PGvoSgHiUu-fYFKRnnpIbPjOf1Y3dnWXLJeZz8ePVufdb1XbL5FNmTLl6YE_9BqI5KPoUZSZbeOOmqTDoTiSf4GZKpcrt8vviX4rnPpSHLg5VqN4O33vX86QBQOuDfwxajQlmG6gXXI1j-uQjzzvK0cyGTTpoCNEybCHkvK9n0_zf4AlEd9Zhao",
+    description: "Esta hermosa canasta werregue es un ejemplo perfecto de la artesanía tradicional del Pacífico colombiano. Tejida completamente a mano utilizando fibras naturales de la palma werregue, cada pieza es única y representa siglos de conocimiento ancestral transmitido de generación en generación.",
+    category: "Cestería",
+    materials: "Fibra de werregue natural",
+    dimensions: "25 cm de diámetro x 15 cm de altura",
+    careInstructions: "Limpiar con paño seco. Evitar exposición directa al sol.",
+    origin: "Chocó, Colombia",
+    artisan: "María Eugenia Rentería",
+    artisanStory: "María Eugenia ha dedicado más de 30 años al arte del tejido werregue. Aprendió esta técnica de su abuela cuando tenía apenas 12 años, y desde entonces ha perfeccionado su craft, convirtiéndose en una de las maestras tejedoras más respetadas de su comunidad. Sus creaciones no solo son hermosas, sino que también preservan una tradición cultural invaluable."
+  };
+
+  const relatedProducts = [
     {
       id: 2,
       name: "Máscara Ceremonial Tallada",
       slug: "mascara-ceremonial-tallada",
       price: 220000,
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
-      description: "Máscara tallada en madera de cativo, utilizada en ceremonias tradicionales del Pacífico.",
-      artisan: "Esteban Mosquera",
-      origin: "Chocó, Colombia",
-      category_id: 2,
-      materials: "Madera de cativo, pigmentos naturales",
-      dimensions: "20cm x 15cm x 8cm",
-      care_instructions: "Mantener en lugar seco, aplicar aceite natural ocasionalmente",
-      artisan_story: "Esteban es un maestro tallador que ha perfeccionado su arte durante 25 años. Sus máscaras son utilizadas en ceremonias tradicionales y representan la conexión espiritual de su comunidad con la naturaleza."
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB4ETYgokQhj0nQBAVVmX7jxxWPqRwDD77G87DzC-MtkjkH7VBJvOGXdb1N6NqbqhNLMiOstfWZds4tKmJrhS_MHjwuLJeJy4l-M2MmvLGlcq9BxNsypxw0YDJA6-4sWTEZdr5KNz1b9NoDjgXx33_AnVhGOtpEiKgYKWlFziDiysWTvAVDzT5Z9lQI7nNbACCu8ARdK3ih1G7gQgpwJGu9ADij66Cs84Qg8u3M_Edkcmy8Qp2VTPF9OCBWAfqRDR3kIUHCE1HY",
+      description: "Máscara tallada en madera de cativo"
+    },
+    {
+      id: 3,
+      name: "Collar de Semillas Nativas",
+      slug: "collar-semillas-nativas",
+      price: 85000,
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCB3cuxe17dLdnRPw5cAkauzqFxQvWLXVvGlSVpZa-1flKj0CvY0cpvtVtxd50EOgSgrZqpd-pf84xyhdRZ3t9h9ZvWoFRcoLXnlTPKRJsYRRqBeqXraKNKKgdG2KpHMMxgXIXlSR4zsjKvpnPn7cHxV1dOh3CR8Kh7DQYNhNlCRN_5t9XOXD5inpGtfvwD3wWJMIVf-oUHXvgTtQ9fp9BpKBrfS6tek19Xw9r8dp0AtiSbBqrrU_FEbRCVF0cY_ggAx5d0uSA",
+      description: "Collar elaborado con semillas de la selva"
+    },
+    {
+      id: 4,
+      name: "Tambor Currulao Artesanal",
+      slug: "tambor-currulao-artesanal",
+      price: 180000,
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmFalOoc0UJxnoTjxOSjaD77-9sNtPEnOKHhiPvXXLexU4fzNpj6E3r5XenD36rr14XqnPgjYkbbLeRCjPHxzXqTGVGxUbBQLbkpxJWr2k4nbMdEGyQxkfuoTVGYaL16xiOApLWMT50U7Lm-7sx2Z8HD5t6_D6cbgQ3jNH02vx7i3RuiDVQjERop1O6wgAk3JhU1nRj2CRO_gioJ-1BgZ7RTfRfvZWC4MgFUbzWqUk7UuLU9n4xx-p_r8PnlWgcNCD9HIX6K7y",
+      description: "Tambor tradicional para currulao"
     }
   ];
 
-  const mockCategories: Category[] = [
-    { id: 1, name: "Cestería", slug: "cesteria" },
-    { id: 2, name: "Tallas en Madera", slug: "tallas-madera" }
-  ];
+  const incrementQuantity = () => {
+    setQuantity(quantity + 1);
+  };
 
-  useEffect(() => {
-    if (productSlug) {
-      // Simulate API call
-      setTimeout(() => {
-        const foundProduct = mockProducts.find(p => p.slug === productSlug);
-        if (foundProduct) {
-          setProduct(foundProduct);
-          const foundCategory = mockCategories.find(c => c.id === foundProduct.category_id);
-          setCategory(foundCategory || null);
-          
-          // Get related products (same category, excluding current)
-          const related = mockProducts.filter(p => 
-            p.category_id === foundProduct.category_id && p.id !== foundProduct.id
-          ).slice(0, 3);
-          setRelatedProducts(related);
-        }
-        setLoading(false);
-      }, 1000);
-    }
-  }, [productSlug]);
-
-  const handleQuantityChange = (change: number) => {
-    const newQuantity = quantity + change;
-    if (newQuantity >= 1) {
-      setQuantity(newQuantity);
+  const decrementQuantity = () => {
+    if (quantity > 1) {
+      setQuantity(quantity - 1);
     }
   };
 
   const handleAddToCart = () => {
     // TODO: Implement add to cart functionality
-    console.log(`Adding ${quantity} of product ${product?.id} to cart`);
-    // Show notification
-    alert(`¡${product?.name} añadido al carrito!`);
+    console.log(`Adding ${quantity} of product ${mockProduct.id} to cart`);
+    alert(`¡${quantity} x ${mockProduct.name} añadido al carrito!`);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <div className="flex justify-center items-center py-32">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selva-600"></div>
-          <span className="ml-4 text-choco-600">Cargando producto...</span>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!product) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header />
-        <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-choco-800 mb-4">Producto no encontrado</h1>
-          <Button onClick={() => window.history.back()}>Volver</Button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      
-      <main className="container mx-auto px-4 py-8">
-        {/* Breadcrumbs */}
-        <nav className="mb-8">
-          <ol className="flex items-center space-x-2 text-sm text-choco-600">
-            <li><a href="/" className="hover:text-selva-600">Inicio</a></li>
-            <li>/</li>
-            <li><a href="/shop" className="hover:text-selva-600">Tienda</a></li>
-            <li>/</li>
-            {category && (
-              <>
-                <li><span className="hover:text-selva-600">{category.name}</span></li>
-                <li>/</li>
-              </>
-            )}
-            <li className="text-choco-800 font-medium">{product.name}</li>
-          </ol>
-        </nav>
 
+      <main className="container mx-auto px-4 py-8">
         {/* Product Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Product Image */}
-          <div className="space-y-4">
-            <div className="aspect-square overflow-hidden rounded-xl bg-selva-50">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
-            </div>
+          <div>
+            <img
+              src={mockProduct.image}
+              alt={mockProduct.name}
+              className="w-full h-auto rounded-xl shadow-md"
+            />
           </div>
 
-          {/* Product Information */}
-          <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-choco-800 mb-4">
-                {product.name}
-              </h1>
-              <div className="text-3xl font-bold text-selva-600 mb-6">
-                ${product.price.toLocaleString()}
-              </div>
-              <p className="text-lg text-choco-600 leading-relaxed">
-                {product.description}
-              </p>
-              <p className="text-sm text-oro-700 font-medium mt-4">
-                Creado por {product.artisan}
-              </p>
+          {/* Product Info */}
+          <div className="space-y-4">
+            <h1 className="text-3xl font-bold text-primary-text">
+              {mockProduct.name}
+            </h1>
+            <div className="flex items-center space-x-2">
+              <Star className="h-5 w-5 text-oro-500" />
+              <Star className="h-5 w-5 text-oro-500" />
+              <Star className="h-5 w-5 text-oro-500" />
+              <Star className="h-5 w-5 text-oro-500" />
+              <Star className="h-5 w-5 text-gray-300" />
+              <span className="text-primary-secondary">
+                (32 valoraciones)
+              </span>
             </div>
+            <div className="text-2xl font-bold text-primary-action">
+              ${mockProduct.price.toLocaleString()}
+            </div>
+            <p className="text-primary-secondary leading-relaxed">
+              {mockProduct.description}
+            </p>
 
-            {/* Quantity Selector */}
+            {/* Quantity and Add to Cart */}
             <div className="flex items-center space-x-4">
-              <span className="text-choco-700 font-medium">Cantidad:</span>
-              <div className="flex items-center border border-choco-300 rounded-lg">
+              {/* Quantity */}
+              <div className="flex items-center border border-primary-secondary/30 rounded-lg">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleQuantityChange(-1)}
+                  onClick={decrementQuantity}
+                  className="hover:bg-primary-background"
                   disabled={quantity <= 1}
-                  className="hover:bg-choco-50"
                 >
-                  <ArrowDown className="h-4 w-4" />
+                  -
                 </Button>
                 <span className="px-4 py-2 font-medium">{quantity}</span>
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleQuantityChange(1)}
-                  className="hover:bg-choco-50"
+                  onClick={incrementQuantity}
+                  className="hover:bg-primary-background"
                 >
-                  <ArrowUp className="h-4 w-4" />
+                  +
                 </Button>
               </div>
+
+              {/* Add to Cart */}
+              <Button
+                className="bg-primary-action hover:bg-primary-action/90 text-white flex items-center space-x-2 rounded-lg"
+                onClick={handleAddToCart}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                <span>Añadir al Carrito</span>
+              </Button>
             </div>
 
-            {/* Add to Cart Button */}
-            <Button
-              onClick={handleAddToCart}
-              size="lg"
-              className="w-full bg-oro-500 hover:bg-oro-600 text-white py-4 text-lg font-semibold flex items-center justify-center space-x-2"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              <span>Añadir al Carrito</span>
-            </Button>
+            {/* Additional Info */}
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2 text-primary-secondary">
+                <Truck className="h-4 w-4" />
+                <span>Envío gratis a todo el país</span>
+              </div>
+              <p className="text-sm text-primary-secondary">
+                Categoría: {mockProduct.category}
+              </p>
+              <p className="text-sm text-primary-secondary">
+                Materiales: {mockProduct.materials}
+              </p>
+              <p className="text-sm text-primary-secondary">
+                Dimensiones: {mockProduct.dimensions}
+              </p>
+              <p className="text-sm text-primary-secondary">
+                Cuidados: {mockProduct.careInstructions}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Product Details Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          <div className="bg-selva-50 rounded-xl p-8">
-            <h2 className="text-2xl font-bold text-choco-800 mb-6">Detalles del Producto</h2>
-            <div className="space-y-4">
-              <div className="flex">
-                <span className="font-medium text-choco-700 w-32">Material:</span>
-                <span className="text-choco-600">{product.materials}</span>
-              </div>
-              <div className="flex">
-                <span className="font-medium text-choco-700 w-32">Dimensiones:</span>
-                <span className="text-choco-600">{product.dimensions}</span>
-              </div>
-              <div className="flex">
-                <span className="font-medium text-choco-700 w-32">Cuidados:</span>
-                <span className="text-choco-600">{product.care_instructions}</span>
-              </div>
-              <div className="flex">
-                <span className="font-medium text-choco-700 w-32">Origen:</span>
-                <span className="text-choco-600">{product.origin}</span>
-              </div>
+        {/* Artisan Info */}
+        <div className="mt-12 bg-primary-background border border-primary-secondary/20 rounded-xl p-6 shadow-sm">
+          <h2 className="text-2xl font-bold text-primary-text mb-4">
+            Sobre el Artesano
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-1">
+              <img
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2jvYcgUdbO3j_QmJPRSCbJeAMz2SfGi9AfeKEr9XnG3VlHPxaCFDwrKvCnsnPaMCMMlNfaVFA_V2S9MdVCZQQaR1uknllkTBbdX81L1uwxzdFBf-qiX97m0tSuDShVXVS4q6V1mpV82iqU195Gs4ZIo2MC23wUNZEVLDy8ilkV504DJDyME7D6xheARyvgL54b50c-EF9uWtFE-bZnSxvs8YaEwPylTu8marr8C-PxmSrxAEKNBv_a_eD-zc01JdY331G_Wo2"
+                alt={`Foto de ${mockProduct.artisan}`}
+                className="w-full h-48 object-cover rounded-lg shadow-md"
+              />
             </div>
-          </div>
-
-          <div className="bg-oro-50 rounded-xl p-8">
-            <h2 className="text-2xl font-bold text-choco-800 mb-6">Historia del Artesano</h2>
-            <p className="text-choco-600 leading-relaxed">
-              {product.artisan_story}
-            </p>
+            <div className="md:col-span-2 space-y-2">
+              <h3 className="text-xl font-semibold text-primary-text">
+                {mockProduct.artisan}
+              </h3>
+              <p className="text-primary-secondary">
+                Origen: {mockProduct.origin}
+              </p>
+              <p className="text-primary-secondary leading-relaxed">
+                {mockProduct.artisanStory}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Related Products */}
-        {relatedProducts.length > 0 && (
-          <section className="mb-16">
-            <h2 className="text-3xl font-bold text-choco-800 mb-8 text-center">
-              Productos Relacionados
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {relatedProducts.map((relatedProduct) => (
-                <ProductCard key={relatedProduct.id} product={relatedProduct} />
-              ))}
-            </div>
-          </section>
-        )}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-primary-text mb-6">
+            Productos Relacionados
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {relatedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </div>
       </main>
 
       <Footer />

@@ -1,231 +1,174 @@
-
-import { useState, useEffect } from "react";
-import { Search } from "lucide-react";
+import { useState } from "react";
+import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import ProductCard from "@/components/ProductCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-
-interface Product {
-  id: number;
-  name: string;
-  slug: string;
-  price: number;
-  image: string;
-  description: string;
-  artisan: string;
-  origin: string;
-  category_id: number;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  slug: string;
-}
 
 const Shop = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // Mock data for demonstration
-  const mockProducts: Product[] = [
+  const mockProducts = [
     {
       id: 1,
       name: "Canasta Werregue Tradicional",
       slug: "canasta-werregue-tradicional",
       price: 145000,
-      image: "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&w=600&q=80",
-      description: "Hermosa canasta tejida con fibra de werregue, técnica ancestral transmitida de generación en generación.",
-      artisan: "María Eugenia Rentería",
-      origin: "Chocó",
-      category_id: 1
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDWuak5jgWo871dE3jZNJ_8aDHOp10aVRkJSkUubDDhHyzSfadTmqTTcJDIHCG34XHuEsoQr399x-2AuCDM8q7izUxr7VFLFCePR_mB7ddHoZG1Y36WtsNHFr6oixC2uP4kqrELEFtkEkmwBJDSAirr7D1bnx5ViffcgCxLkRXwvLNuN-7XKOtA02d6kBcJw4spJ-b_xDhfs5GeFSuBp_iHI3yLsjxR7jMwh0KGntIBtUruBRdRqgwsR7KY2QXjcBcaD-zOcolZ",
+      description: "Hermosa canasta tejida con fibra de werregue",
+      category: "cesteria",
+      artisan: "María Eugenia Rentería"
     },
     {
       id: 2,
       name: "Máscara Ceremonial Tallada",
-      slug: "mascara-ceremonial-tallada",
+      slug: "mascara-ceremonial-tallada", 
       price: 220000,
-      image: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=600&q=80",
-      description: "Máscara tallada en madera de cativo, utilizada en ceremonias tradicionales del Pacífico.",
-      artisan: "Esteban Mosquera",
-      origin: "Chocó",
-      category_id: 2
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDfdkZHi6mJGrVFvipEnHYxSNdT4c8GZl2Q3UuotA6-ftPzmdTj5hg2KQyYG9M2ltIntGZytn9d1ucB5pbYoQtBGx8oUYKEfL2scolrGal2IJ9Zi4zs_kOYoouEokw8K2t8BsCkcsFY_CPTJQpnZcgVC8-GlDj3CLPhJqjKZ6kDMXgI_xt9_FWXbDbQv7z5_KIFXW3n-QpyZ_v0UDu3V-naoEIISoC4vvW0cuJhrQT592C1P_ag_tOuEG4xYjFZBkR_HbL9vZyQ",
+      description: "Máscara tallada en madera de cativo",
+      category: "tallado",
+      artisan: "Esteban Mosquera"
     },
     {
       id: 3,
       name: "Collar de Semillas Nativas",
       slug: "collar-semillas-nativas",
       price: 85000,
-      image: "https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=600&q=80",
-      description: "Collar elaborado con semillas de la selva chocoana, diseño contemporáneo con raíces ancestrales.",
-      artisan: "Yurany Palacios",
-      origin: "Chocó",
-      category_id: 3
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuACdHKq8dpJVu1OFr11VadzGaSw98CpGJKBtrV90esdnvOmcQhpA5qYnSzOVt_cJ1QyDspxrquXaWnxVN0lqO-OPH5IzXucoqwW0xA4xKVc7KJ-v5kpbpmVbg4ZGIn6VgTNNZ-WZ7Avagzer_SYt1Z8zE3WXkk3Qsbi21wT18nw0hGZTJUiJb3GwcVGzpB6yNbIE32LDlGUjdBO4gB9HK5Z_NqVyZKgse-ZVxv2giWIDYgBsBs6vzTq-HPIw47UR47HGH9iq3qk",
+      description: "Collar elaborado con semillas de la selva",
+      category: "joyeria",
+      artisan: "Yurany Palacios"
     },
     {
       id: 4,
       name: "Tambor Currulao Artesanal",
       slug: "tambor-currulao-artesanal",
       price: 180000,
-      image: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=600&q=80",
-      description: "Tambor tradicional para currulao, construido con maderas nativas y cuero de res curtido.",
-      artisan: "Carlos Moreno",
-      origin: "Chocó",
-      category_id: 4
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDRdgRfqoOraHvKi0q2qUDAVJBVJtdadXA7aFZ1M1eDEIsi03aVASS8H2K0tPFbMJe0eh35A5jWP9sMeVNuQIYEoINt7kJC2erc8vUwXB5wikkd9e3VFoRmLaI6YctlzDQaZAK9MJs6yfOAtCBBRTh2pNKEglQIac794d-s6OYfpSkelReNobGQ7dJg17hoiZIoVVWslSbATj-1Rw2ec9eHOBrdsAhINbaaTN8Dz77LYj2gi6VhWc8XQ4j8cBb-asVmePVmll65",
+      description: "Tambor tradicional para currulao",
+      category: "musica",
+      artisan: "Carlos Moreno"
     },
     {
       id: 5,
-      name: "Cesta de Fibra Natural",
-      slug: "cesta-fibra-natural",
+      name: "Tejido Tradicional Chocoano",
+      slug: "tejido-tradicional-chocoano",
       price: 95000,
-      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-      description: "Cesta elaborada con fibras naturales de la región, perfecta para decoración o almacenamiento.",
-      artisan: "Rosa Palacios",
-      origin: "Chocó",
-      category_id: 1
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBuRqtTIaVTX8ggRhtSGkmfAbVfqwMCkX0x_QG7jplgAC7I2-tApvb5ZZBtOrPkkCHy50Y5YLT8GWQpUTg0UZdPkhn0a9YifV3YTpcncS_z0cBp2_Qu6CKgAnTJlWhKhgB4rQ-RarJghFH2IrdSAJtS2laKfGCULR92JYexkS2gnKT-bVHA7ZkGGa2HFIPbQTr6b5NiHb9Xop2OBhZdKP51yS4od6aSMl8kcBNiIebDvnWcRkLBoe1bHIZg8oqMacDribbtutVr",
+      description: "Textil artesanal con patrones tradicionales",
+      category: "textiles",
+      artisan: "Ana Lucía Moreno"
     },
     {
       id: 6,
-      name: "Escultura en Madera",
-      slug: "escultura-madera",
-      price: 310000,
-      image: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=600&q=80",
-      description: "Escultura tallada a mano en madera de cativo, representando la fauna local del Chocó.",
-      artisan: "Miguel Torres",
-      origin: "Chocó",
-      category_id: 2
+      name: "Vasija de Barro Tradicional",
+      slug: "vasija-barro-tradicional",
+      price: 120000,
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC4NKKNBrdjKmefojYoBUYHShZWMp2RSCAqNnFxVnvbrgK3fuCbv1feF6P37mGEkpnOYR59lp8McDKZfjZPPoXWqM6EoB7QR4uMdhr4KbwGxRJYMRk4Zqqe-sD9igP_rSKJ3CEvBxwMD31c1aKVVOrYXDtmutc5i3Ttm_Pt88DZxJGOGHCpBHgIWUWOZbbb3v4-EHQ9irtPxIDXshXCCBy30gSvMrMBUTFQQKDyfGohFVlSztaZDf1rTFvVOLERpQjc5RYmXkSt",
+      description: "Vasija de barro cocido a mano",
+      category: "ceramica",
+      artisan: "Roberto Sinisterra"
     }
   ];
 
-  const mockCategories: Category[] = [
-    { id: 1, name: "Cestería", slug: "cesteria" },
-    { id: 2, name: "Tallas en Madera", slug: "tallas-madera" },
-    { id: 3, name: "Joyería", slug: "joyeria" },
-    { id: 4, name: "Instrumentos", slug: "instrumentos" }
-  ];
-
-  useEffect(() => {
+  useState(() => {
     // Simulate API call
     setTimeout(() => {
       setProducts(mockProducts);
-      setCategories(mockCategories);
       setLoading(false);
-    }, 1000);
+    }, 500);
   }, []);
 
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || 
-                           categories.find(cat => cat.slug === selectedCategory)?.id === product.category_id;
-    return matchesSearch && matchesCategory;
+    const categoryMatch = categoryFilter === "all" || product.category === categoryFilter;
+    const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return categoryMatch && searchMatch;
   });
 
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCategoryFilter(e.target.value);
   };
 
-  const handleCategoryFilter = (categorySlug: string) => {
-    setSelectedCategory(categorySlug);
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header />
+        <div className="flex justify-center items-center py-32">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-action"></div>
+          <span className="ml-4 text-primary-text">Cargando productos...</span>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-choco-800 mb-4">
-            Nuestra Tienda
-          </h1>
-          <p className="text-lg text-choco-600">
-            Descubre la auténtica artesanía afrocolombiana del Chocó
-          </p>
-        </div>
+        <h1 className="text-3xl md:text-4xl font-bold text-primary-text mb-8">
+          Nuestra Tienda
+        </h1>
 
-        {/* Filters and Search */}
-        <div className="bg-selva-50 rounded-lg p-6 mb-8">
-          <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
-            {/* Search Bar */}
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-choco-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Buscar productos..."
-                value={searchTerm}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 border-choco-200 focus:ring-selva-500 focus:border-selva-500"
-              />
-            </div>
+        {/* Filters */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8 space-y-4 md:space-y-0">
+          <div className="flex items-center space-x-4">
+            <label htmlFor="category" className="text-primary-text">
+              Filtrar por categoría:
+            </label>
+            <select
+              id="category"
+              className="border border-primary-secondary/30 rounded-md px-4 py-2 focus:border-primary-action"
+              value={categoryFilter}
+              onChange={handleCategoryChange}
+            >
+              <option value="all">Todas las categorías</option>
+              <option value="cesteria">Cestería</option>
+              <option value="tallado">Tallado</option>
+              <option value="joyeria">Joyería</option>
+              <option value="musica">Música</option>
+              <option value="textiles">Textiles</option>
+              <option value="ceramica">Cerámica</option>
+            </select>
+          </div>
 
-            {/* Category Filters */}
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant={selectedCategory === "all" ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleCategoryFilter("all")}
-                className={selectedCategory === "all" ? "bg-selva-600 hover:bg-selva-700" : "border-choco-300 text-choco-700 hover:bg-choco-50"}
-              >
-                Todos
-              </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.slug ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleCategoryFilter(category.slug)}
-                  className={selectedCategory === category.slug ? "bg-selva-600 hover:bg-selva-700" : "border-choco-300 text-choco-700 hover:bg-choco-50"}
-                >
-                  {category.name}
-                </Button>
-              ))}
-            </div>
+          <div className="flex items-center space-x-4">
+            <label htmlFor="search" className="text-primary-text">
+              Buscar producto:
+            </label>
+            <input
+              type="text"
+              id="search"
+              className="border border-primary-secondary/30 rounded-md px-4 py-2 focus:border-primary-action"
+              placeholder="Buscar..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
           </div>
         </div>
 
-        {/* Products Grid */}
-        {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-selva-600"></div>
-            <span className="ml-4 text-choco-600">Cargando productos...</span>
+        {/* Product Grid */}
+        {filteredProducts.length === 0 ? (
+          <div className="text-center py-16">
+            <h2 className="text-2xl font-semibold text-primary-text mb-4">
+              No se encontraron productos
+            </h2>
+            <p className="text-primary-secondary mb-8">
+              Intenta ajustar los filtros o la búsqueda
+            </p>
           </div>
         ) : (
-          <>
-            <div className="mb-6">
-              <p className="text-choco-600">
-                Mostrando {filteredProducts.length} de {products.length} productos
-              </p>
-            </div>
-            
-            {filteredProducts.length === 0 ? (
-              <div className="text-center py-16">
-                <h3 className="text-xl font-semibold text-choco-800 mb-2">
-                  No se encontraron productos
-                </h3>
-                <p className="text-choco-600 mb-6">
-                  Intenta cambiar los filtros o el término de búsqueda
-                </p>
-                <Button onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory("all");
-                }} className="bg-selva-600 hover:bg-selva-700">
-                  Limpiar Filtros
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
         )}
       </main>
 

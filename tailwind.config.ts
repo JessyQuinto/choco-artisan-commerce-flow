@@ -20,55 +20,15 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Chocó-inspired color palette
-				choco: {
-					50: '#f6f3f0',
-					100: '#e8dfd8',
-					200: '#d0bfae',
-					300: '#b39980',
-					400: '#9a7a5b',
-					500: '#8b6f47', // Main brown
-					600: '#7d5f3d',
-					700: '#684f35',
-					800: '#564231',
-					900: '#49392b',
+				// Nueva paleta de colores basada en el perfil UX/UI
+				primary: {
+					text: '#181311', // Texto Principal
+					secondary: '#886f63', // Texto Secundario/Iconos/Bordes/Placeholders
+					background: '#f4f2f0', // Fondo/Botones de Navegación
+					action: '#e55d19', // Botones de Acción
+					white: '#ffffff', // Fondo Principal
 				},
-				selva: {
-					50: '#f0fdf4',
-					100: '#dcfce7',
-					200: '#bbf7d0',
-					300: '#86efac',
-					400: '#4ade80',
-					500: '#22c55e', // Main green
-					600: '#16a34a',
-					700: '#15803d',
-					800: '#166534',
-					900: '#14532d',
-				},
-				pacifico: {
-					50: '#eff6ff',
-					100: '#dbeafe',
-					200: '#bfdbfe',
-					300: '#93c5fd',
-					400: '#60a5fa',
-					500: '#3b82f6', // Main blue
-					600: '#2563eb',
-					700: '#1d4ed8',
-					800: '#1e40af',
-					900: '#1e3a8a',
-				},
-				oro: {
-					50: '#fffbeb',
-					100: '#fef3c7',
-					200: '#fde68a',
-					300: '#fcd34d',
-					400: '#fbbf24',
-					500: '#f59e0b', // Main gold
-					600: '#d97706',
-					700: '#b45309',
-					800: '#92400e',
-					900: '#78350f',
-				},
+				// Mantenemos los colores originales para compatibilidad con shadcn
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -102,6 +62,9 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+			},
+			fontFamily: {
+				sans: ['"Plus Jakarta Sans"', '"Noto Sans"', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
