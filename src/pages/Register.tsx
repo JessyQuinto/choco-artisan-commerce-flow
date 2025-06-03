@@ -4,8 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useStore } from "@/store/useStore";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +20,10 @@ const Register = () => {
   });
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  
+  const { login } = useStore();
+  const { showSuccess, showError } = useNotifications();
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,35 +33,59 @@ const Register = () => {
     }));
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     // Validation
     if (!acceptTerms) {
-      setError("Debes aceptar los términos y condiciones");
+      showError("Debes aceptar los términos y condiciones");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
+      showError("Por favor, completa todos los campos");
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      showError("Por favor, ingresa un email válido");
       setLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      showError("Las contraseñas no coinciden");
       setLoading(false);
       return;
     }
 
     if (formData.password.length < 6) {
-      setError("La contraseña debe tener al menos 6 caracteres");
+      showError("La contraseña debe tener al menos 6 caracteres");
       setLoading(false);
       return;
     }
 
     // Simulate API call
     setTimeout(() => {
-      console.log("Registration successful", formData);
-      // Redirect to login or profile
-      window.location.href = "/login";
+      const userData = {
+        id: "user-" + Date.now(),
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      };
+      
+      login(userData);
+      showSuccess("¡Cuenta creada exitosamente! Bienvenido a Chocó Artesanal");
+      navigate("/profile");
       setLoading(false);
     }, 1000);
   };
@@ -66,26 +96,20 @@ const Register = () => {
       
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto">
-          <div className="bg-white border border-primary-secondary/20 rounded-xl p-8 shadow-lg">
+          <div className="bg-white border border-secondary/20 rounded-xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-primary-text mb-2">
+              <h1 className="text-3xl font-bold text-primary mb-2">
                 Crear Cuenta
               </h1>
-              <p className="text-primary-secondary">
+              <p className="text-secondary">
                 Únete a la comunidad de Chocó Artesanal
               </p>
             </div>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                {error}
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="firstName" className="text-primary-text">
+                  <Label htmlFor="firstName" className="text-primary">
                     Nombre
                   </Label>
                   <Input
@@ -95,12 +119,12 @@ const Register = () => {
                     required
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                    className="mt-1 border-secondary/30 focus:border-action"
                     placeholder="Tu nombre"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName" className="text-primary-text">
+                  <Label htmlFor="lastName" className="text-primary">
                     Apellido
                   </Label>
                   <Input
@@ -110,14 +134,14 @@ const Register = () => {
                     required
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                    className="mt-1 border-secondary/30 focus:border-action"
                     placeholder="Tu apellido"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-primary-text">
+                <Label htmlFor="email" className="text-primary">
                   Correo Electrónico
                 </Label>
                 <Input
@@ -127,13 +151,13 @@ const Register = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                  className="mt-1 border-secondary/30 focus:border-action"
                   placeholder="tu@email.com"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-primary-text">
+                <Label htmlFor="password" className="text-primary">
                   Contraseña
                 </Label>
                 <Input
@@ -143,13 +167,13 @@ const Register = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                  className="mt-1 border-secondary/30 focus:border-action"
                   placeholder="Mínimo 6 caracteres"
                 />
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword" className="text-primary-text">
+                <Label htmlFor="confirmPassword" className="text-primary">
                   Confirmar Contraseña
                 </Label>
                 <Input
@@ -159,7 +183,7 @@ const Register = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                  className="mt-1 border-secondary/30 focus:border-action"
                   placeholder="Repite tu contraseña"
                 />
               </div>
@@ -172,33 +196,33 @@ const Register = () => {
                     setAcceptTerms(checked === true);
                   }}
                 />
-                <label htmlFor="terms" className="text-sm text-primary-secondary leading-relaxed cursor-pointer">
+                <label htmlFor="terms" className="text-sm text-secondary leading-relaxed cursor-pointer">
                   Acepto los{" "}
-                  <a href="#" className="text-primary-action hover:underline">
+                  <Link to="/terms" className="text-action hover:underline">
                     términos y condiciones
-                  </a>{" "}
+                  </Link>{" "}
                   y la{" "}
-                  <a href="#" className="text-primary-action hover:underline">
+                  <Link to="/privacy" className="text-action hover:underline">
                     política de privacidad
-                  </a>
+                  </Link>
                 </label>
               </div>
 
               <Button
                 type="submit"
                 disabled={loading || !acceptTerms}
-                className="w-full bg-primary-action hover:bg-primary-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
+                className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
               >
                 {loading ? "Creando cuenta..." : "Crear Cuenta"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-primary-secondary">
+              <p className="text-secondary">
                 ¿Ya tienes una cuenta?{" "}
-                <a href="/login" className="text-primary-action hover:underline font-semibold">
+                <Link to="/login" className="text-action hover:underline font-semibold">
                   Inicia sesión
-                </a>
+                </Link>
               </p>
             </div>
           </div>

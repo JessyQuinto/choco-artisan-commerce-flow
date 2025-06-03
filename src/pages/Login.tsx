@@ -3,8 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useStore } from "@/store/useStore";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +15,10 @@ const Login = () => {
     password: ""
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  
+  const { login } = useStore();
+  const { showSuccess, showError } = useNotifications();
+  const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,20 +28,42 @@ const Login = () => {
     }));
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+
+    // Validate form
+    if (!formData.email || !formData.password) {
+      showError("Por favor, completa todos los campos");
+      setLoading(false);
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      showError("Por favor, ingresa un email válido");
+      setLoading(false);
+      return;
+    }
 
     // Simulate API call
     setTimeout(() => {
-      if (formData.email && formData.password) {
-        console.log("Login successful", formData);
-        // Redirect to profile or home
-        window.location.href = "/profile";
-      } else {
-        setError("Por favor, completa todos los campos");
-      }
+      // Mock successful login
+      const userData = {
+        id: "user-1",
+        name: "Usuario Demo",
+        email: formData.email,
+        firstName: "Usuario",
+        lastName: "Demo"
+      };
+      
+      login(userData);
+      showSuccess("¡Bienvenido de vuelta!");
+      navigate("/profile");
       setLoading(false);
     }, 1000);
   };
@@ -46,25 +74,19 @@ const Login = () => {
       
       <main className="container mx-auto px-4 py-16">
         <div className="max-w-md mx-auto">
-          <div className="bg-white border border-primary-secondary/20 rounded-xl p-8 shadow-lg">
+          <div className="bg-white border border-secondary/20 rounded-xl p-8 shadow-lg">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-primary-text mb-2">
+              <h1 className="text-3xl font-bold text-primary mb-2">
                 Iniciar Sesión
               </h1>
-              <p className="text-primary-secondary">
+              <p className="text-secondary">
                 Accede a tu cuenta de Chocó Artesanal
               </p>
             </div>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-                {error}
-              </div>
-            )}
-
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <Label htmlFor="email" className="text-primary-text">
+                <Label htmlFor="email" className="text-primary">
                   Correo Electrónico
                 </Label>
                 <Input
@@ -74,13 +96,13 @@ const Login = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                  className="mt-1 border-secondary/30 focus:border-action"
                   placeholder="tu@email.com"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-primary-text">
+                <Label htmlFor="password" className="text-primary">
                   Contraseña
                 </Label>
                 <Input
@@ -90,7 +112,7 @@ const Login = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="mt-1 border-primary-secondary/30 focus:border-primary-action"
+                  className="mt-1 border-secondary/30 focus:border-action"
                   placeholder="Tu contraseña"
                 />
               </div>
@@ -98,22 +120,22 @@ const Login = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-primary-action hover:bg-primary-action/90 text-white py-3 text-lg font-semibold"
+                className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
               >
                 {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-primary-secondary">
+              <p className="text-secondary">
                 ¿No tienes una cuenta?{" "}
-                <a href="/register" className="text-primary-action hover:underline font-semibold">
+                <Link to="/register" className="text-action hover:underline font-semibold">
                   Regístrate aquí
-                </a>
+                </Link>
               </p>
-              <a href="#" className="text-primary-secondary hover:text-primary-action text-sm mt-2 inline-block">
+              <Link to="#" className="text-secondary hover:text-action text-sm mt-2 inline-block">
                 ¿Olvidaste tu contraseña?
-              </a>
+              </Link>
             </div>
           </div>
         </div>

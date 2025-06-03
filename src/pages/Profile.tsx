@@ -1,291 +1,295 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Edit, Save, X } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, ShoppingBag, Heart, Edit2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useStore } from "@/store/useStore";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const Profile = () => {
+  const { user, isLoggedIn, updateUser, cartItems, wishlist } = useStore();
+  const { showSuccess, showError } = useNotifications();
+  const navigate = useNavigate();
+  
   const [isEditing, setIsEditing] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState({
-    firstName: "María",
-    lastName: "González",
-    email: "maria.gonzalez@email.com",
-    phone: "+57 300 123 4567",
-    address: "Calle 123 #45-67",
-    city: "Bogotá",
-    country: "Colombia"
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: ""
   });
 
-  const [mockOrders] = useState([
-    {
-      id: "ORD-001",
-      date: "2024-01-15",
-      total: 145000,
-      status: "Entregado",
-      items: [
-        { name: "Canasta Werregue Tradicional", quantity: 1, price: 145000 }
-      ]
-    },
-    {
-      id: "ORD-002", 
-      date: "2024-01-10",
-      total: 305000,
-      status: "En tránsito",
-      items: [
-        { name: "Máscara Ceremonial Tallada", quantity: 1, price: 220000 },
-        { name: "Collar de Semillas Nativas", quantity: 1, price: 85000 }
-      ]
+  useEffect(() => {
+    if (!isLoggedIn || !user) {
+      navigate("/login");
+      return;
     }
-  ]);
+    
+    setFormData({
+      firstName: user.firstName || "",
+      lastName: user.lastName || "",
+      email: user.email || ""
+    });
+  }, [isLoggedIn, user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUserInfo(prev => ({
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
   const handleSave = () => {
-    setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Profile updated", userInfo);
-      setIsEditing(false);
-      setLoading(false);
-    }, 1000);
+    if (!formData.firstName || !formData.lastName || !formData.email) {
+      showError("Por favor, completa todos los campos");
+      return;
+    }
+
+    updateUser({
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      name: `${formData.firstName} ${formData.lastName}`
+    });
+    
+    setIsEditing(false);
+    showSuccess("Perfil actualizado exitosamente");
   };
 
   const handleCancel = () => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || ""
+      });
+    }
     setIsEditing(false);
-    // Reset to original values if needed
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Entregado":
-        return "text-green-600 bg-green-50";
-      case "En tránsito":
-        return "text-blue-600 bg-blue-50";
-      case "Pendiente":
-        return "text-yellow-600 bg-yellow-50";
-      default:
-        return "text-gray-600 bg-gray-50";
-    }
-  };
+  if (!isLoggedIn || !user) {
+    return null;
+  }
+
+  const totalSpent = cartItems.reduce((sum, item) => sum + item.total, 0);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary-text mb-8">
-            Mi Perfil
-          </h1>
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+              Mi Perfil
+            </h1>
+            <p className="text-secondary">
+              Gestiona tu información personal y revisa tu actividad
+            </p>
+          </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Profile Information */}
-            <div className="lg:col-span-2">
-              <div className="bg-white border border-primary-secondary/20 rounded-xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-primary-text">
-                    Información Personal
-                  </h2>
-                  {!isEditing ? (
-                    <Button
-                      onClick={() => setIsEditing(true)}
-                      variant="outline"
-                      className="border-primary-action text-primary-action hover:bg-primary-action hover:text-white"
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Editar
-                    </Button>
-                  ) : (
-                    <div className="flex space-x-2">
-                      <Button
-                        onClick={handleSave}
-                        disabled={loading}
-                        className="bg-primary-action hover:bg-primary-action/90 text-white"
-                      >
-                        <Save className="h-4 w-4 mr-2" />
-                        {loading ? "Guardando..." : "Guardar"}
-                      </Button>
-                      <Button
-                        onClick={handleCancel}
-                        variant="outline"
-                        className="border-primary-secondary text-primary-secondary hover:bg-primary-background"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Cancelar
-                      </Button>
-                    </div>
-                  )}
-                </div>
+          <Tabs defaultValue="profile" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="profile" className="flex items-center space-x-2">
+                <User className="h-4 w-4" />
+                <span>Perfil</span>
+              </TabsTrigger>
+              <TabsTrigger value="orders" className="flex items-center space-x-2">
+                <ShoppingBag className="h-4 w-4" />
+                <span>Pedidos</span>
+              </TabsTrigger>
+              <TabsTrigger value="wishlist" className="flex items-center space-x-2">
+                <Heart className="h-4 w-4" />
+                <span>Favoritos</span>
+              </TabsTrigger>
+            </TabsList>
 
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-6 mb-6">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2jvYcgUdbO3j_QmJPRSCbJeAMz2SfGi9AfeKEr9XnG3VlHPxaCFDwrKvCnsnPaMCMMlNfaVFA_V2S9MdVCZQQaR1uknllkTBbdX81L1uwxzdFBf-qiX97m0tSuDShVXVS4q6V1mpV82iqU195Gs4ZIo2MC23wUNZEVLDy8ilkV504DJDyME7D6xheARyvgL54b50c-EF9uWtFE-bZnSxvs8YaEwPylTu8marr8C-PxmSrxAEKNBv_a_eD-zc01JdY331G_Wo2" />
-                      <AvatarFallback className="bg-primary-background text-primary-text">
-                        {userInfo.firstName[0]}{userInfo.lastName[0]}
-                      </AvatarFallback>
-                    </Avatar>
+            <TabsContent value="profile">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-xl font-semibold text-primary-text">
-                        {userInfo.firstName} {userInfo.lastName}
-                      </h3>
-                      <p className="text-primary-secondary">{userInfo.email}</p>
+                      <CardTitle>Información Personal</CardTitle>
+                      <CardDescription>
+                        Actualiza tu información de contacto
+                      </CardDescription>
                     </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditing(!isEditing)}
+                      className="flex items-center space-x-2"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                      <span>{isEditing ? "Cancelar" : "Editar"}</span>
+                    </Button>
                   </div>
-
+                </CardHeader>
+                <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <Label htmlFor="firstName" className="text-primary-text">
+                      <Label htmlFor="firstName" className="text-primary">
                         Nombre
                       </Label>
                       <Input
                         id="firstName"
                         name="firstName"
-                        value={userInfo.firstName}
+                        value={formData.firstName}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
+                        className="mt-1 border-secondary/30 focus:border-action"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName" className="text-primary-text">
+                      <Label htmlFor="lastName" className="text-primary">
                         Apellido
                       </Label>
                       <Input
                         id="lastName"
                         name="lastName"
-                        value={userInfo.lastName}
+                        value={formData.lastName}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-primary-text">
-                        Correo Electrónico
-                      </Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={userInfo.email}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="phone" className="text-primary-text">
-                        Teléfono
-                      </Label>
-                      <Input
-                        id="phone"
-                        name="phone"
-                        value={userInfo.phone}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
-                      />
-                    </div>
-                    <div className="md:col-span-2">
-                      <Label htmlFor="address" className="text-primary-text">
-                        Dirección
-                      </Label>
-                      <Input
-                        id="address"
-                        name="address"
-                        value={userInfo.address}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="city" className="text-primary-text">
-                        Ciudad
-                      </Label>
-                      <Input
-                        id="city"
-                        name="city"
-                        value={userInfo.city}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="country" className="text-primary-text">
-                        País
-                      </Label>
-                      <Input
-                        id="country"
-                        name="country"
-                        value={userInfo.country}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="mt-1 border-primary-secondary/30 focus:border-primary-action disabled:bg-gray-50"
+                        className="mt-1 border-secondary/30 focus:border-action"
                       />
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
+                  
+                  <div>
+                    <Label htmlFor="email" className="text-primary">
+                      Correo Electrónico
+                    </Label>
+                    <Input
+                      id="email"
+      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      disabled={!isEditing}
+                      className="mt-1 border-secondary/30 focus:border-action"
+                    />
+                  </div>
 
-            {/* Order History */}
-            <div>
-              <div className="bg-white border border-primary-secondary/20 rounded-xl p-6 shadow-sm">
-                <h2 className="text-2xl font-bold text-primary-text mb-6">
-                  Mis Pedidos
-                </h2>
-                
-                <div className="space-y-4">
-                  {mockOrders.map((order) => (
-                    <div key={order.id} className="border border-primary-secondary/20 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-primary-text">
-                          {order.id}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </div>
-                      <p className="text-sm text-primary-secondary mb-2">
-                        {new Date(order.date).toLocaleDateString('es-ES')}
-                      </p>
-                      <div className="space-y-1 mb-3">
-                        {order.items.map((item, index) => (
-                          <p key={index} className="text-xs text-primary-secondary">
-                            {item.quantity}x {item.name}
-                          </p>
-                        ))}
-                      </div>
-                      <p className="font-bold text-primary-action">
-                        ${order.total.toLocaleString()}
-                      </p>
+                  {isEditing && (
+                    <div className="flex space-x-4">
+                      <Button onClick={handleSave} className="bg-action hover:bg-action/90">
+                        Guardar Cambios
+                      </Button>
+                      <Button variant="outline" onClick={handleCancel}>
+                        Cancelar
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </CardContent>
+              </Card>
 
-                <Button
-                  variant="outline"
-                  className="w-full mt-6 border-primary-secondary text-primary-text hover:bg-primary-background"
-                >
-                  Ver Todos los Pedidos
-                </Button>
-              </div>
-            </div>
-          </div>
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Resumen de Actividad</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-action">{cartItems.length}</div>
+                      <div className="text-sm text-secondary">Productos en carrito</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-action">{wishlist.length}</div>
+                      <div className="text-sm text-secondary">Productos favoritos</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-action">${totalSpent.toLocaleString()}</div>
+                      <div className="text-sm text-secondary">Total en carrito</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="orders">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Historial de Pedidos</CardTitle>
+                  <CardDescription>
+                    Revisa tus compras anteriores
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-12">
+                    <ShoppingBag className="h-12 w-12 text-secondary mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-primary mb-2">
+                      No tienes pedidos aún
+                    </h3>
+                    <p className="text-secondary mb-6">
+                      Explora nuestra tienda y realiza tu primera compra
+                    </p>
+                    <Button asChild className="bg-action hover:bg-action/90">
+                      <a href="/shop">Ir a la Tienda</a>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="wishlist">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lista de Favoritos</CardTitle>
+                  <CardDescription>
+                    Productos que has guardado para más tarde
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {wishlist.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Heart className="h-12 w-12 text-secondary mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-primary mb-2">
+                        No tienes favoritos aún
+                      </h3>
+                      <p className="text-secondary mb-6">
+                        Explora productos y añádelos a tu lista de favoritos
+                      </p>
+                      <Button asChild className="bg-action hover:bg-action/90">
+                        <a href="/shop">Explorar Productos</a>
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {wishlist.map((product) => (
+                        <div key={product.id} className="border border-secondary/20 rounded-lg p-4">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-48 object-cover rounded-lg mb-4"
+                          />
+                          <h4 className="font-semibold text-primary mb-2 line-clamp-2">
+                            {product.name}
+                          </h4>
+                          <p className="text-secondary text-sm mb-3 line-clamp-2">
+                            {product.description}
+                          </p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-action">
+                              ${product.price.toLocaleString()}
+                            </span>
+                            <Button size="sm" asChild className="bg-action hover:bg-action/90">
+                              <a href={`/product-detail?slug=${product.slug}`}>Ver</a>
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </main>
 
