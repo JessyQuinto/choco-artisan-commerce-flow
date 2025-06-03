@@ -1,215 +1,271 @@
 
 import { useState } from "react";
-import { Star, ShoppingCart, Truck } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import ProductCard from "@/components/ProductCard";
+import { useSearchParams, Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ProductReviews from "@/components/ProductReviews";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Heart, ShoppingCart, Star, Truck, Shield, RotateCcw } from "lucide-react";
+import { useStore } from "@/store/useStore";
+import { useToast } from "@/hooks/use-toast";
 
 const ProductDetail = () => {
+  const [searchParams] = useSearchParams();
+  const productId = parseInt(searchParams.get('id') || '1');
+  const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const mockProduct = {
-    id: 1,
+  const { addToCart, addToWishlist, removeFromWishlist, wishlist } = useStore();
+  const { toast } = useToast();
+
+  // Mock product data
+  const product = {
+    id: productId,
     name: "Canasta Werregue Tradicional",
     slug: "canasta-werregue-tradicional",
-    price: 145000,
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBFaUMzL0TJ3ftO-Z9NP77vsHxLxWz8xqypo9txaRXzBkKEJA-6B0kNc9RmimWHtg5DYe0bR9z4VK4dwwJQ_PGvoSgHiUu-fYFKRnnpIbPjOf1Y3dnWXLJeZz8ePVufdb1XbL5FNmTLl6YE_9BqI5KPoUZSZbeOOmqTDoTiSf4GZKpcrt8vviX4rnPpSHLg5VqN4O33vX86QBQOuDfwxajQlmG6gXXI1j-uQjzzvK0cyGTTpoCNEybCHkvK9n0_zf4AlEd9Zhao",
-    description: "Esta hermosa canasta werregue es un ejemplo perfecto de la artesanía tradicional del Pacífico colombiano. Tejida completamente a mano utilizando fibras naturales de la palma werregue, cada pieza es única y representa siglos de conocimiento ancestral transmitido de generación en generación.",
-    category: "Cestería",
-    materials: "Fibra de werregue natural",
-    dimensions: "25 cm de diámetro x 15 cm de altura",
-    careInstructions: "Limpiar con paño seco. Evitar exposición directa al sol.",
-    origin: "Chocó, Colombia",
-    artisan: "María Eugenia Rentería",
-    artisanStory: "María Eugenia ha dedicado más de 30 años al arte del tejido werregue. Aprendió esta técnica de su abuela cuando tenía apenas 12 años, y desde entonces ha perfeccionado su craft, convirtiéndose en una de las maestras tejedoras más respetadas de su comunidad. Sus creaciones no solo son hermosas, sino que también preservan una tradición cultural invaluable."
+    price: 125000,
+    originalPrice: 150000,
+    description: "Hermosa canasta tejida a mano con técnica ancestral werregue por artesanas del Chocó. Cada pieza es única y representa siglos de tradición cultural afrocolombiana.",
+    longDescription: "Esta canasta werregue es el resultado de un proceso artesanal que puede tomar hasta una semana de trabajo continuo. Las fibras de palma werregue son recolectadas en las primeras horas del amanecer, cuando mantienen su flexibilidad natural. Luego son tratadas con tintes naturales obtenidos de plantas y cortezas del bosque chocoano para crear los hermosos patrones que caracterizan estas piezas únicas.",
+    images: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCLswbkOAcmwcFCNgL_xY92lp3tt-l8P_xdDa9NeBLMyAhttCigBtSeeMSBDYWe9t_a6Il0UXOknWI2os6CCt1I9dLJmTvuRwrdpcO5fU8cRdUV6BfD-ABk2X1qCIK4IVXewqMtVh3bp2ZjzYQUxMaICtzPAt-r9sk8cOmScenvCgfOu49lG540ua8ia-fYXo2vJf_I8K9z2g9-wk6qgaeYcJdr8X-iW-TIozAwtMBin40N51OqI-zRafq_1_esIJVjr_nxzGj1",
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuARjqnGyGs8CvQ7D1JDSXhxnB5MeH2OfnX5F5ui3Im92a7iJxkR17wyt54-hX-JqeuJqqVkl7hPUqaTL0xxeGl1DVk9KjZgVpm3GhkCPf4nLPG-4cKFm3OSbZgpkKgkZIF9-ecJ-a7_xfMiF16m-fT6Pzs6FcL5rB4iRaRaQAssWyBd09WQxJbxSZciQzHbIJTJ4E29ZRAak6zXpQKgKdxjQDH8SsKLT9hLdfftb1M8dq1f14rTRoLobFn5fgtgYf7EJs1_S70j",
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBQ4XGsCBZ76gbzDLTBUKPL654varlCw0is3FwR5TP-2AgtxRDmuVaQBUgQYhGv5lkIHEZsWWoTzSz5B6CnSZG445gOdpFxA-mfBdpWwyXT2LK2_kjvbec21WiHOYY5MISY1EsF8KIoE8BYs4YizVUXxi_PcuMovWowjXjJOe-Aud0g0665YSEPgGeqresF6-ik1fkpMda7X3H2Fuy7Z-NCCwKrKppYK1w5ST3LJqrn1ab2J-3KsqfY1lFMG0Ew2BfvAIB8BVMn"
+    ],
+    artisan: "María del Carmen Mosquera",
+    origin: "Quibdó, Chocó",
+    category: "Cestas y Canastas",
+    materials: ["Fibra de werregue", "Tintes naturales"],
+    dimensions: "30cm x 25cm x 15cm",
+    inStock: true,
+    rating: 4.8,
+    reviews: 24
   };
 
-  const relatedProducts = [
-    {
-      id: 2,
-      name: "Máscara Ceremonial Tallada",
-      slug: "mascara-ceremonial-tallada",
-      price: 220000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB4ETYgokQhj0nQBAVVmX7jxxWPqRwDD77G87DzC-MtkjkH7VBJvOGXdb1N6NqbqhNLMiOstfWZds4tKmJrhS_MHjwuLJeJy4l-M2MmvLGlcq9BxNsypxw0YDJA6-4sWTEZdr5KNz1b9NoDjgXx33_AnVhGOtpEiKgYKWlFziDiysWTvAVDzT5Z9lQI7nNbACCu8ARdK3ih1G7gQgpwJGu9ADij66Cs84Qg8u3M_Edkcmy8Qp2VTPF9OCBWAfqRDR3kIUHCE1HY",
-      description: "Máscara tallada en madera de cativo",
-      artisan: "Esteban Mosquera",
-      origin: "Chocó"
-    },
-    {
-      id: 3,
-      name: "Collar de Semillas Nativas",
-      slug: "collar-semillas-nativas",
-      price: 85000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCCB3cuxe17dLdnRPw5cAkauzqFxQvWLXVvGlSVpZa-1flKj0CvY0cpvtVtxd50EOgSgrZqpd-pf84xyhdRZ3t9h9ZvWoFRcoLXnlTPKRJsYRRqBeqXraKNKKgdG2KpHMMxgXIXlSR4zsjKvpnPn7cHxV1dOh3CR8Kh7DQYNhNlCRN_5t9XOXD5inpGtfvwD3wWJMIVf-oUHXvgTtQ9fp9BpKBrfS6tek19Xw9r8dp0AtiSbBqrrU_FEbRCVF0cY_ggAx5d0uSA",
-      description: "Collar elaborado con semillas de la selva",
-      artisan: "Yurany Palacios",
-      origin: "Chocó"
-    },
-    {
-      id: 4,
-      name: "Tambor Currulao Artesanal",
-      slug: "tambor-currulao-artesanal",
-      price: 180000,
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAmFalOoc0UJxnoTjxOSjaD77-9sNtPEnOKHhiPvXXLexU4fzNpj6E3r5XenD36rr14XqnPgjYkbbLeRCjPHxzXqTGVGxUbBQLbkpxJWr2k4nbMdEGyQxkfuoTVGYaL16xiOApLWMT50U7Lm-7sx2Z8HD5t6_D6cbgQ3jNH02vx7i3RuiDVQjERop1O6wgAk3JhU1nRj2CRO_gioJ-1BgZ7RTfRfvZWC4MgFUbzWqUk7UuLU9n4xx-p_r8PnlWgcNCD9HIX6K7y",
-      description: "Tambor tradicional para currulao",
-      artisan: "Carlos Moreno",
-      origin: "Chocó"
-    }
-  ];
-
-  const incrementQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
+  const isInWishlist = wishlist.some(item => item.id === product.id);
 
   const handleAddToCart = () => {
-    // TODO: Implement add to cart functionality
-    console.log(`Adding ${quantity} of product ${mockProduct.id} to cart`);
-    alert(`¡${quantity} x ${mockProduct.name} añadido al carrito!`);
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity
+    });
+    toast({
+      title: "¡Producto agregado!",
+      description: `${product.name} se agregó a tu carrito`,
+    });
+  };
+
+  const handleWishlistToggle = () => {
+    if (isInWishlist) {
+      removeFromWishlist(product.id);
+      toast({
+        title: "Removido de favoritos",
+        description: `${product.name} se removió de tus favoritos`,
+      });
+    } else {
+      addToWishlist({
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        price: product.price,
+        image: product.images[0],
+        description: product.description,
+        artisan: product.artisan,
+        origin: product.origin
+      });
+      toast({
+        title: "¡Agregado a favoritos!",
+        description: `${product.name} se agregó a tus favoritos`,
+      });
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header />
+      
+      <main className="container mx-auto px-4 py-8">
+        <Breadcrumb className="mb-8">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/shop">Tienda</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{product.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
-      <main className="container mx-auto px-4 py-6 md:py-8">
-        {/* Product Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-12">
-          {/* Product Image */}
-          <div className="order-1 lg:order-1">
-            <img
-              src={mockProduct.image}
-              alt={mockProduct.name}
-              className="w-full h-auto rounded-xl shadow-md object-cover max-h-96 md:max-h-none"
-            />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
+          {/* Product Images */}
+          <div className="space-y-4">
+            <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
+              <img
+                src={product.images[selectedImage]}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {product.images.map((image, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
+                    selectedImage === index ? 'border-primary-action' : 'border-transparent'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`${product.name} - Vista ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Product Info */}
-          <div className="order-2 lg:order-2 space-y-4 md:space-y-6">
-            <h1 className="text-2xl md:text-3xl font-bold text-primary-text">
-              {mockProduct.name}
-            </h1>
-            <div className="flex items-center space-x-2">
-              <div className="flex space-x-1">
-                <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-current" />
-                <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-current" />
-                <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-current" />
-                <Star className="h-4 w-4 md:h-5 md:w-5 text-yellow-400 fill-current" />
-                <Star className="h-4 w-4 md:h-5 md:w-5 text-gray-300" />
+          <div className="space-y-6">
+            <div>
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < Math.floor(product.rating) 
+                          ? 'fill-yellow-400 text-yellow-400' 
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-primary-secondary">
+                  {product.rating} ({product.reviews} reseñas)
+                </span>
               </div>
-              <span className="text-primary-secondary text-sm md:text-base">
-                (32 valoraciones)
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-text mb-2">
+                {product.name}
+              </h1>
+              <p className="text-primary-secondary">
+                Por <span className="font-medium">{product.artisan}</span> • {product.origin}
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-4">
+              <span className="text-2xl md:text-3xl font-bold text-primary-action">
+                ${product.price.toLocaleString()}
               </span>
+              {product.originalPrice && (
+                <>
+                  <span className="text-lg text-primary-secondary line-through">
+                    ${product.originalPrice.toLocaleString()}
+                  </span>
+                  <Badge className="bg-green-100 text-green-800">
+                    -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+                  </Badge>
+                </>
+              )}
             </div>
-            <div className="text-2xl md:text-3xl font-bold text-primary-action">
-              ${mockProduct.price.toLocaleString()}
-            </div>
-            <p className="text-primary-secondary leading-relaxed text-sm md:text-base">
-              {mockProduct.description}
+
+            <p className="text-primary-secondary text-lg leading-relaxed">
+              {product.description}
             </p>
 
-            {/* Quantity and Add to Cart */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              {/* Quantity */}
-              <div className="flex items-center border border-primary-secondary/30 rounded-lg w-full sm:w-auto">
+            {/* Product Details */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-primary-background rounded-xl">
+              <div>
+                <h4 className="font-semibold text-primary-text mb-2">Detalles del Producto</h4>
+                <ul className="space-y-1 text-sm text-primary-secondary">
+                  <li><strong>Categoría:</strong> {product.category}</li>
+                  <li><strong>Dimensiones:</strong> {product.dimensions}</li>
+                  <li><strong>Materiales:</strong> {product.materials.join(', ')}</li>
+                </ul>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
+                  <Truck className="h-4 w-4" />
+                  <span>Envío gratis a toda Colombia</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
+                  <Shield className="h-4 w-4" />
+                  <span>Garantía de autenticidad</span>
+                </div>
+                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
+                  <RotateCcw className="h-4 w-4" />
+                  <span>Devoluciones en 30 días</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quantity and Actions */}
+            <div className="space-y-4">
+              <div className="flex items-center space-x-4">
+                <label className="font-medium text-primary-text">Cantidad:</label>
+                <div className="flex items-center border border-primary-secondary/30 rounded-lg">
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="px-3 py-2 text-primary-secondary hover:text-primary-action"
+                  >
+                    −
+                  </button>
+                  <span className="px-4 py-2 font-medium">{quantity}</span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="px-3 py-2 text-primary-secondary hover:text-primary-action"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={decrementQuantity}
-                  className="hover:bg-primary-background px-3 py-2"
-                  disabled={quantity <= 1}
+                  onClick={handleAddToCart}
+                  className="flex-1 bg-primary-action hover:bg-primary-action/90 text-white border-0 shadow-md hover:shadow-lg transition-all"
+                  size="lg"
                 >
-                  -
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Agregar al Carrito
                 </Button>
-                <span className="px-4 py-2 font-medium flex-grow text-center">{quantity}</span>
                 <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={incrementQuantity}
-                  className="hover:bg-primary-background px-3 py-2"
+                  onClick={handleWishlistToggle}
+                  variant="outline"
+                  size="lg"
+                  className={`border-primary-action ${
+                    isInWishlist 
+                      ? 'bg-primary-action text-white' 
+                      : 'text-primary-action hover:bg-primary-action hover:text-white'
+                  } border-2 shadow-sm hover:shadow-md transition-all`}
                 >
-                  +
+                  <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`} />
                 </Button>
               </div>
-
-              {/* Add to Cart */}
-              <Button
-                className="bg-primary-action hover:bg-primary-action/90 text-white flex items-center justify-center space-x-2 rounded-lg px-6 py-3 w-full sm:w-auto"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-4 w-4" />
-                <span>Añadir al Carrito</span>
-              </Button>
-            </div>
-
-            {/* Additional Info */}
-            <div className="space-y-2 pt-4 border-t border-primary-secondary/20">
-              <div className="flex items-center space-x-2 text-primary-secondary">
-                <Truck className="h-4 w-4" />
-                <span className="text-sm md:text-base">Envío gratis a todo el país</span>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                <p className="text-primary-secondary">
-                  <span className="font-medium">Categoría:</span> {mockProduct.category}
-                </p>
-                <p className="text-primary-secondary">
-                  <span className="font-medium">Materiales:</span> {mockProduct.materials}
-                </p>
-                <p className="text-primary-secondary">
-                  <span className="font-medium">Dimensiones:</span> {mockProduct.dimensions}
-                </p>
-                <p className="text-primary-secondary">
-                  <span className="font-medium">Cuidados:</span> {mockProduct.careInstructions}
-                </p>
-              </div>
             </div>
           </div>
         </div>
 
-        {/* Artisan Info */}
-        <div className="mb-12 bg-primary-background border border-primary-secondary/20 rounded-xl p-4 md:p-6 shadow-sm">
-          <h2 className="text-xl md:text-2xl font-bold text-primary-text mb-4 md:mb-6">
-            Sobre el Artesano
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            <div className="md:col-span-1">
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2jvYcgUdbO3j_QmJPRSCbJeAMz2SfGi9AfeKEr9XnG3VlHPxaCFDwrKvCnsnPaMCMMlNfaVFA_V2S9MdVCZQQaR1uknllkTBbdX81L1uwxzdFBf-qiX97m0tSuDShVXVS4q6V1mpV82iqU195Gs4ZIo2MC23wUNZEVLDy8ilkV504DJDyME7D6xheARyvgL54b50c-EF9uWtFE-bZnSxvs8YaEwPylTu8marr8C-PxmSrxAEKNBv_a_eD-zc01JdY331G_Wo2"
-                alt={`Foto de ${mockProduct.artisan}`}
-                className="w-full h-40 md:h-48 object-cover rounded-lg shadow-md"
-              />
-            </div>
-            <div className="md:col-span-2 space-y-2">
-              <h3 className="text-lg md:text-xl font-semibold text-primary-text">
-                {mockProduct.artisan}
-              </h3>
-              <p className="text-primary-secondary">
-                <span className="font-medium">Origen:</span> {mockProduct.origin}
-              </p>
-              <p className="text-primary-secondary leading-relaxed text-sm md:text-base">
-                {mockProduct.artisanStory}
-              </p>
-            </div>
-          </div>
+        {/* Product Description */}
+        <div className="mb-12">
+          <h3 className="text-2xl font-bold text-primary-text mb-6">Descripción Detallada</h3>
+          <p className="text-primary-secondary text-lg leading-relaxed">
+            {product.longDescription}
+          </p>
         </div>
 
-        {/* Related Products */}
-        <div>
-          <h2 className="text-xl md:text-2xl font-bold text-primary-text mb-6">
-            Productos Relacionados
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {relatedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </div>
+        {/* Reviews Section */}
+        <ProductReviews productId={product.id} />
       </main>
 
       <Footer />
