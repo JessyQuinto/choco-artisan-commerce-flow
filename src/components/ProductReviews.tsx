@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, User } from "lucide-react";
-import { useStore } from "@/store/useStore";
+import { useAuth } from "@/store/useStore";
 import { useToast } from "@/hooks/use-toast";
 
 interface Review {
@@ -37,7 +37,7 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
     }
   ]);
 
-  const { isLoggedIn } = useStore();
+  const { isLoggedIn } = useAuth();
   const { toast } = useToast();
 
   const handleSubmitReview = () => {

@@ -1,30 +1,36 @@
 
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const useNotifications = () => {
-  const showSuccess = (message: string, title?: string) => {
+  const { toast } = useToast();
+
+  const showSuccess = (message: string) => {
     toast({
-      title: title || "¡Éxito!",
+      title: "Éxito",
       description: message,
       variant: "default"
     });
   };
 
-  const showError = (message: string, title?: string) => {
+  const showError = (message: string) => {
     toast({
-      title: title || "Error",
+      title: "Error",
       description: message,
       variant: "destructive"
     });
   };
 
-  const showInfo = (message: string, title?: string) => {
+  const showInfo = (message: string) => {
     toast({
-      title: title || "Información",
+      title: "Información",
       description: message,
       variant: "default"
     });
   };
 
-  return { showSuccess, showError, showInfo };
+  return {
+    showSuccess,
+    showError,
+    showInfo
+  };
 };

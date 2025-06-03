@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useStore } from "@/store/useStore";
+import { useStore, useAuth } from "@/store/useStore";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
-  const { cartCount, user, isLoggedIn, searchQuery, setSearchQuery, logout, wishlist } = useStore();
+  const { cartCount, searchQuery, setSearchQuery, logout, wishlist } = useStore();
+  const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => {

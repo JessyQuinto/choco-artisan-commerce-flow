@@ -27,6 +27,7 @@ const ProductDetail = () => {
     slug: "canasta-werregue-tradicional",
     price: 125000,
     originalPrice: 150000,
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCLswbkOAcmwcFCNgL_xY92lp3tt-l8P_xdDa9NeBLMyAhttCigBtSeeMSBDYWe9t_a6Il0UXOknWI2os6CCt1I9dLJmTvuRwrdpcO5fU8cRdUV6BfD-ABk2X1qCIK4IVXewqMtVh3bp2ZjzYQUxMaICtzPAt-r9sk8cOmScenvCgfOu49lG540ua8ia-fYXo2vJf_I8K9z2g9-wk6qgaeYcJdr8X-iW-TIozAwtMBin40N51OqI-zRafq_1_esIJVjr_nxzGj1",
     description: "Hermosa canasta tejida a mano con técnica ancestral werregue por artesanas del Chocó. Cada pieza es única y representa siglos de tradición cultural afrocolombiana.",
     longDescription: "Esta canasta werregue es el resultado de un proceso artesanal que puede tomar hasta una semana de trabajo continuo. Las fibras de palma werregue son recolectadas en las primeras horas del amanecer, cuando mantienen su flexibilidad natural. Luego son tratadas con tintes naturales obtenidos de plantas y cortezas del bosque chocoano para crear los hermosos patrones que caracterizan estas piezas únicas.",
     images: [
