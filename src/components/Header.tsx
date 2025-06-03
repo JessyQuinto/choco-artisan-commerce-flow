@@ -36,8 +36,16 @@ const Header = () => {
     closeMenu();
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    closeMenu();
+  };
+
   return (
-    <header className="bg-white shadow-sm border-b border-secondary/20 sticky top-0 z-50">
+    <header className="bg-background shadow-sm border-b border-secondary/20 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -61,9 +69,12 @@ const Header = () => {
             <Link to="/shop" className="text-primary hover:text-action font-medium transition-colors">
               Tienda
             </Link>
-            <Link to="/#historias" className="text-primary hover:text-action font-medium transition-colors">
+            <button 
+              onClick={() => scrollToSection('historias')}
+              className="text-primary hover:text-action font-medium transition-colors"
+            >
               Historias
-            </Link>
+            </button>
             <Link to="/about" className="text-primary hover:text-action font-medium transition-colors">
               Sobre Nosotros
             </Link>
@@ -189,7 +200,7 @@ const Header = () => {
 
         {/* Mobile Search */}
         {isSearchOpen && (
-          <div className="md:hidden border-t border-secondary/20 py-4 bg-white">
+          <div className="md:hidden border-t border-secondary/20 py-4 bg-background">
             <form onSubmit={handleSearch} className="flex items-center space-x-2">
               <Input
                 type="text"
@@ -208,7 +219,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-secondary/20 py-4 bg-white">
+          <div className="lg:hidden border-t border-secondary/20 py-4 bg-background">
             <nav className="flex flex-col space-y-3">
               <Link 
                 to="/" 
@@ -224,13 +235,12 @@ const Header = () => {
               >
                 Tienda
               </Link>
-              <Link 
-                to="/#historias" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
-                onClick={closeMenu}
+              <button 
+                onClick={() => scrollToSection('historias')}
+                className="text-primary hover:text-action font-medium py-2 transition-colors text-left"
               >
                 Historias
-              </Link>
+              </button>
               <Link 
                 to="/about" 
                 className="text-primary hover:text-action font-medium py-2 transition-colors"

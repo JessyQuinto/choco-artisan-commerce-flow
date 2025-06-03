@@ -1,14 +1,29 @@
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState({
+    category: "all",
+    priceRange: "all",
+    artisan: "",
+    sortBy: "name",
+    search: searchParams.get('search') || ""
+  });
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showFilters, setShowFilters] = useState(false);
 
   const mockProducts = [
     {
@@ -80,34 +95,61 @@ const Shop = () => {
   ];
 
   useEffect(() => {
-    // Simulate API call
     setTimeout(() => {
       setProducts(mockProducts);
       setLoading(false);
     }, 500);
   }, []);
 
-  const filteredProducts = products.filter(product => {
-    const categoryMatch = categoryFilter === "all" || product.category === categoryFilter;
-    const searchMatch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return categoryMatch && searchMatch;
-  });
+  const filteredProducts = useMemo(() => {
+    let filtered = products.filter(product => {
+      const categoryMatch = filters.category === "all" || product.category === filters.category;
+      const searchMatch = product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+                         product.artisan.toLowerCase().includes(filters.search.toLowerCase());
+      const artisanMatch = !filters.artisan || product.artisan.toLowerCase().includes(filters.artisan.toLowerCase());
+      
+      let priceMatch = true;
+      if (filters.priceRange !== "all") {
+        if (filters.priceRange === "low") priceMatch = product.price < 100000;
+        else if (filters.priceRange === "medium") priceMatch = product.price >= 100000 && product.price <= 200000;
+        else if (filters.priceRange === "high") priceMatch = product.price > 200000;
+      }
+      
+      return categoryMatch && searchMatch && artisanMatch && priceMatch;
+    });
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCategoryFilter(e.target.value);
+    // Ordenar
+    if (filters.sortBy === "price-low") {
+      filtered = filtered.sort((a, b) => a.price - b.price);
+    } else if (filters.sortBy === "price-high") {
+      filtered = filtered.sort((a, b) => b.price - a.price);
+    } else if (filters.sortBy === "name") {
+      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    return filtered;
+  }, [products, filters]);
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+  const clearFilters = () => {
+    setFilters({
+      category: "all",
+      priceRange: "all",
+      artisan: "",
+      sortBy: "name",
+      search: ""
+    });
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <Header />
         <div className="flex justify-center items-center py-32">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-action"></div>
-          <span className="ml-4 text-primary-text">Cargando productos...</span>
+          <LoadingSpinner size="lg" text="Cargando productos..." />
         </div>
         <Footer />
       </div>
@@ -115,68 +157,196 @@ const Shop = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-text mb-8">
+        <Breadcrumb className="mb-8">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Tienda</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-8">
           Nuestra Tienda
         </h1>
 
-        {/* Filters */}
+        {/* Controles superiores */}
         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0 gap-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
-            <label htmlFor="category" className="text-primary-text font-medium whitespace-nowrap">
-              Filtrar por categoría:
-            </label>
-            <select
-              id="category"
-              className="w-full sm:w-auto border border-primary-secondary/30 rounded-md px-4 py-2 focus:border-primary-action focus:outline-none"
-              value={categoryFilter}
-              onChange={handleCategoryChange}
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowFilters(!showFilters)}
+              className="lg:hidden border-action text-action hover:bg-action hover:text-white"
             >
-              <option value="all">Todas las categorías</option>
-              <option value="cesteria">Cestería</option>
-              <option value="tallado">Tallado</option>
-              <option value="joyeria">Joyería</option>
-              <option value="musica">Música</option>
-              <option value="textiles">Textiles</option>
-              <option value="ceramica">Cerámica</option>
-            </select>
+              <SlidersHorizontal className="h-4 w-4 mr-2" />
+              Filtros
+            </Button>
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("grid")}
+                className={viewMode === "grid" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"}
+              >
+                <Grid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className={viewMode === "list" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
-            <label htmlFor="search" className="text-primary-text font-medium whitespace-nowrap">
-              Buscar producto:
-            </label>
-            <input
-              type="text"
-              id="search"
-              className="w-full sm:w-auto border border-primary-secondary/30 rounded-md px-4 py-2 focus:border-primary-action focus:outline-none"
-              placeholder="Buscar..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="sort" className="text-primary font-medium whitespace-nowrap">
+              Ordenar por:
+            </Label>
+            <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange("sortBy", value)}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Ordenar por" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name">Nombre (A-Z)</SelectItem>
+                <SelectItem value="price-low">Precio (Menor a Mayor)</SelectItem>
+                <SelectItem value="price-high">Precio (Mayor a Menor)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        {/* Product Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="text-center py-16">
-            <h2 className="text-xl md:text-2xl font-semibold text-primary-text mb-4">
-              No se encontraron productos
-            </h2>
-            <p className="text-primary-secondary mb-8">
-              Intenta ajustar los filtros o la búsqueda
-            </p>
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar de filtros */}
+          <div className={`lg:w-1/4 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-background border border-secondary/20 rounded-xl p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-primary flex items-center">
+                  <Filter className="h-5 w-5 mr-2" />
+                  Filtros
+                </h3>
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="text-action hover:text-action/80">
+                  Limpiar
+                </Button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Búsqueda */}
+                <div>
+                  <Label htmlFor="search" className="text-primary font-medium mb-2 block">
+                    Buscar
+                  </Label>
+                  <Input
+                    id="search"
+                    type="text"
+                    placeholder="Buscar productos..."
+                    value={filters.search}
+                    onChange={(e) => handleFilterChange("search", e.target.value)}
+                    className="border-secondary/30 focus:border-action"
+                  />
+                </div>
+
+                {/* Categoría */}
+                <div>
+                  <Label className="text-primary font-medium mb-2 block">
+                    Categoría
+                  </Label>
+                  <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar categoría" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas las categorías</SelectItem>
+                      <SelectItem value="cesteria">Cestería</SelectItem>
+                      <SelectItem value="tallado">Tallado</SelectItem>
+                      <SelectItem value="joyeria">Joyería</SelectItem>
+                      <SelectItem value="musica">Música</SelectItem>
+                      <SelectItem value="textiles">Textiles</SelectItem>
+                      <SelectItem value="ceramica">Cerámica</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Rango de precio */}
+                <div>
+                  <Label className="text-primary font-medium mb-2 block">
+                    Rango de Precio
+                  </Label>
+                  <Select value={filters.priceRange} onValueChange={(value) => handleFilterChange("priceRange", value)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar rango" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos los precios</SelectItem>
+                      <SelectItem value="low">Menos de $100.000</SelectItem>
+                      <SelectItem value="medium">$100.000 - $200.000</SelectItem>
+                      <SelectItem value="high">Más de $200.000</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Artesano */}
+                <div>
+                  <Label htmlFor="artisan" className="text-primary font-medium mb-2 block">
+                    Artesano
+                  </Label>
+                  <Input
+                    id="artisan"
+                    type="text"
+                    placeholder="Buscar por artesano..."
+                    value={filters.artisan}
+                    onChange={(e) => handleFilterChange("artisan", e.target.value)}
+                    className="border-secondary/30 focus:border-action"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+
+          {/* Productos */}
+          <div className="flex-1">
+            {filteredProducts.length === 0 ? (
+              <div className="text-center py-16">
+                <h2 className="text-xl md:text-2xl font-semibold text-primary mb-4">
+                  No se encontraron productos
+                </h2>
+                <p className="text-secondary mb-8">
+                  Intenta ajustar los filtros o la búsqueda
+                </p>
+                <Button onClick={clearFilters} className="bg-action hover:bg-action/90 text-white">
+                  Limpiar Filtros
+                </Button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <p className="text-secondary">
+                    {filteredProducts.length} {filteredProducts.length === 1 ? 'producto encontrado' : 'productos encontrados'}
+                  </p>
+                </div>
+
+                <div className={viewMode === "grid" 
+                  ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"
+                  : "space-y-6"
+                }>
+                  {filteredProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </main>
 
       <Footer />
