@@ -9,20 +9,20 @@ import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Heart, ShoppingCart, Star, Truck, Shield, RotateCcw } from "lucide-react";
 import { useStore } from "@/store/useStore";
-import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/hooks/useNotifications";
 
 const ProductDetail = () => {
   const [searchParams] = useSearchParams();
-  const productId = parseInt(searchParams.get('id') || '1');
+  const productSlug = searchParams.get('slug') || 'canasta-werregue-tradicional';
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { addToCart, addToWishlist, removeFromWishlist, wishlist } = useStore();
-  const { toast } = useToast();
+  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
+  const { showSuccess } = useNotifications();
 
-  // Mock product data
+  // Mock product data - to be replaced with API call
   const product = {
-    id: productId,
+    id: 1,
     name: "Canasta Werregue Tradicional",
     slug: "canasta-werregue-tradicional",
     price: 125000,
@@ -44,44 +44,20 @@ const ProductDetail = () => {
     reviews: 24
   };
 
-  const isInWishlist = wishlist.some(item => item.id === product.id);
+  const inWishlist = isInWishlist(product.id);
 
   const handleAddToCart = () => {
-    addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.images[0],
-      quantity
-    });
-    toast({
-      title: "¡Producto agregado!",
-      description: `${product.name} se agregó a tu carrito`,
-    });
+    addToCart(product, quantity);
+    showSuccess(`¡${product.name} añadido al carrito!`);
   };
 
   const handleWishlistToggle = () => {
-    if (isInWishlist) {
+    if (inWishlist) {
       removeFromWishlist(product.id);
-      toast({
-        title: "Removido de favoritos",
-        description: `${product.name} se removió de tus favoritos`,
-      });
+      showSuccess(`${product.name} eliminado de favoritos`);
     } else {
-      addToWishlist({
-        id: product.id,
-        name: product.name,
-        slug: product.slug,
-        price: product.price,
-        image: product.images[0],
-        description: product.description,
-        artisan: product.artisan,
-        origin: product.origin
-      });
-      toast({
-        title: "¡Agregado a favoritos!",
-        description: `${product.name} se agregó a tus favoritos`,
-      });
+      addToWishlist(product);
+      showSuccess(`¡${product.name} añadido a favoritos!`);
     }
   };
 
@@ -244,12 +220,12 @@ const ProductDetail = () => {
                   variant="outline"
                   size="lg"
                   className={`border-primary-action ${
-                    isInWishlist 
+                    inWishlist 
                       ? 'bg-primary-action text-white' 
                       : 'text-primary-action hover:bg-primary-action hover:text-white'
                   } border-2 shadow-sm hover:shadow-md transition-all`}
                 >
-                  <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`} />
+                  <Heart className={`h-5 w-5 ${inWishlist ? 'fill-current' : ''}`} />
                 </Button>
               </div>
             </div>

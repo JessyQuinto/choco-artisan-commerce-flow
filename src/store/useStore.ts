@@ -25,42 +25,92 @@ interface User {
   email: string;
   firstName: string;
   lastName: string;
+  avatar?: string;
+  phone?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
+}
+
+interface AuthState {
+  user: User | null;
+  isLoggedIn: boolean;
+  token: string | null;
+  isLoading: boolean;
+}
+
+interface SearchFilters {
+  category: string;
+  priceRange: string;
+  artisan: string;
+  sortBy: string;
+  search: string;
+  inStock?: boolean;
+  region?: string;
 }
 
 interface Store {
   // Cart state
   cartItems: CartItem[];
   cartCount: number;
+  cartTotal: number;
   
-  // User state
-  user: User | null;
-  isLoggedIn: boolean;
+  // Auth state
+  auth: AuthState;
   
   // Wishlist state
   wishlist: Product[];
   
   // UI state
   searchQuery: string;
+  filters: SearchFilters;
+  isLoading: boolean;
+  error: string | null;
   
   // Cart actions
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: number) => void;
   updateCartQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
+  getCartTotal: () => number;
   
-  // User actions
-  login: (userData: User) => void;
+  // Auth actions
+  login: (userData: User, token?: string) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
+  setAuthLoading: (loading: boolean) => void;
   
   // Wishlist actions
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: number) => void;
   isInWishlist: (productId: number) => boolean;
+  clearWishlist: () => void;
   
   // UI actions
   setSearchQuery: (query: string) => void;
+  updateFilters: (filters: Partial<SearchFilters>) => void;
+  resetFilters: () => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  
+  // Utility actions
+  clearUserData: () => void;
+  getStorageStats: () => { cartItems: number; wishlistItems: number; };
 }
+
+const initialFilters: SearchFilters = {
+  category: "all",
+  priceRange: "all",
+  artisan: "",
+  sortBy: "name",
+  search: "",
+  inStock: true,
+  region: "all"
+};
 
 export const useStore = create<Store>()(
   persist(
@@ -68,10 +118,18 @@ export const useStore = create<Store>()(
       // Initial state
       cartItems: [],
       cartCount: 0,
-      user: null,
-      isLoggedIn: false,
+      cartTotal: 0,
+      auth: {
+        user: null,
+        isLoggedIn: false,
+        token: null,
+        isLoading: false
+      },
       wishlist: [],
       searchQuery: '',
+      filters: initialFilters,
+      isLoading: false,
+      error: null,
       
       // Cart actions
       addToCart: (product, quantity = 1) => {
@@ -83,7 +141,11 @@ export const useStore = create<Store>()(
         if (existingItem) {
           newCartItems = cartItems.map(item =>
             item.id === product.id
-              ? { ...item, quantity: item.quantity + quantity, total: (item.quantity + quantity) * item.price }
+              ? { 
+                  ...item, 
+                  quantity: item.quantity + quantity, 
+                  total: (item.quantity + quantity) * item.price 
+                }
               : item
           );
         } else {
@@ -95,19 +157,26 @@ export const useStore = create<Store>()(
           newCartItems = [...cartItems, newItem];
         }
         
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
+        
         set({
           cartItems: newCartItems,
-          cartCount: newCartItems.reduce((sum, item) => sum + item.quantity, 0)
+          cartCount: newCount,
+          cartTotal: newTotal
         });
       },
       
       removeFromCart: (productId) => {
         const { cartItems } = get();
         const newCartItems = cartItems.filter(item => item.id !== productId);
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
         set({
           cartItems: newCartItems,
-          cartCount: newCartItems.reduce((sum, item) => sum + item.quantity, 0)
+          cartCount: newCount,
+          cartTotal: newTotal
         });
       },
       
@@ -121,30 +190,68 @@ export const useStore = create<Store>()(
             : item
         );
         
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
+        
         set({
           cartItems: newCartItems,
-          cartCount: newCartItems.reduce((sum, item) => sum + item.quantity, 0)
+          cartCount: newCount,
+          cartTotal: newTotal
         });
       },
       
       clearCart: () => {
-        set({ cartItems: [], cartCount: 0 });
+        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
       },
       
-      // User actions
-      login: (userData) => {
-        set({ user: userData, isLoggedIn: true });
+      getCartTotal: () => {
+        const { cartItems } = get();
+        return cartItems.reduce((sum, item) => sum + item.total, 0);
+      },
+      
+      // Auth actions
+      login: (userData, token) => {
+        set({
+          auth: {
+            user: userData,
+            isLoggedIn: true,
+            token: token || null,
+            isLoading: false
+          }
+        });
       },
       
       logout: () => {
-        set({ user: null, isLoggedIn: false });
+        set({
+          auth: {
+            user: null,
+            isLoggedIn: false,
+            token: null,
+            isLoading: false
+          }
+        });
+        // Optionally clear cart and wishlist on logout
+        // get().clearCart();
+        // get().clearWishlist();
       },
       
       updateUser: (userData) => {
-        const { user } = get();
-        if (user) {
-          set({ user: { ...user, ...userData } });
+        const { auth } = get();
+        if (auth.user) {
+          set({
+            auth: {
+              ...auth,
+              user: { ...auth.user, ...userData }
+            }
+          });
         }
+      },
+      
+      setAuthLoading: (loading) => {
+        const { auth } = get();
+        set({
+          auth: { ...auth, isLoading: loading }
+        });
       },
       
       // Wishlist actions
@@ -165,9 +272,50 @@ export const useStore = create<Store>()(
         return wishlist.some(item => item.id === productId);
       },
       
+      clearWishlist: () => {
+        set({ wishlist: [] });
+      },
+      
       // UI actions
       setSearchQuery: (query) => {
         set({ searchQuery: query });
+      },
+      
+      updateFilters: (newFilters) => {
+        const { filters } = get();
+        set({ filters: { ...filters, ...newFilters } });
+      },
+      
+      resetFilters: () => {
+        set({ filters: initialFilters, searchQuery: '' });
+      },
+      
+      setLoading: (loading) => {
+        set({ isLoading: loading });
+      },
+      
+      setError: (error) => {
+        set({ error });
+      },
+      
+      // Utility actions
+      clearUserData: () => {
+        get().logout();
+        get().clearCart();
+        get().clearWishlist();
+        set({ 
+          searchQuery: '', 
+          filters: initialFilters,
+          error: null 
+        });
+      },
+      
+      getStorageStats: () => {
+        const { cartItems, wishlist } = get();
+        return {
+          cartItems: cartItems.length,
+          wishlistItems: wishlist.length
+        };
       }
     }),
     {
@@ -175,10 +323,21 @@ export const useStore = create<Store>()(
       partialize: (state) => ({
         cartItems: state.cartItems,
         cartCount: state.cartCount,
-        user: state.user,
-        isLoggedIn: state.isLoggedIn,
-        wishlist: state.wishlist
+        cartTotal: state.cartTotal,
+        auth: state.auth,
+        wishlist: state.wishlist,
+        filters: state.filters
       })
     }
   )
 );
+
+// Selectors for better performance
+export const useAuth = () => useStore(state => state.auth);
+export const useCart = () => useStore(state => ({ 
+  items: state.cartItems, 
+  count: state.cartCount, 
+  total: state.cartTotal 
+}));
+export const useWishlist = () => useStore(state => state.wishlist);
+export const useFilters = () => useStore(state => state.filters);
