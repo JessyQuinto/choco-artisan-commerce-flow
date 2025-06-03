@@ -20,28 +20,24 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Nueva paleta de colores basada en el perfil UX/UI
-				primary: {
-					text: '#181311', // Texto Principal
-					secondary: '#886f63', // Texto Secundario/Iconos/Bordes/Placeholders
-					background: '#f4f2f0', // Fondo/Botones de Navegación
-					action: '#e55d19', // Botones de Acción
-					white: '#ffffff', // Fondo Principal
-				},
-				// Mantenemos los colores originales para compatibilidad con shadcn
+				// Paleta principal optimizada
+				'primary-text': '#181311',
+				'primary-secondary': '#886f63', 
+				'primary-background': '#f4f2f0',
+				'primary-action': '#e55d19',
+				'primary-white': '#ffffff',
+				
+				// Aliases para facilidad de uso
+				'action': '#e55d19',
+				'secondary': '#886f63',
+				'primary': '#181311',
+				'background': '#ffffff',
+				
+				// Colores shadcn originales para compatibilidad
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
 					foreground: 'hsl(var(--destructive-foreground))'
@@ -73,41 +69,17 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
-				},
-				'fade-in': {
-					'0%': {
-						opacity: '0',
-						transform: 'translateY(20px)'
-					},
-					'100%': {
-						opacity: '1',
-						transform: 'translateY(0)'
-					}
-				},
-				'float': {
-					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.6s ease-out',
-				'float': 'float 3s ease-in-out infinite'
+				'accordion-up': 'accordion-up 0.2s ease-out'
 			}
 		}
 	},

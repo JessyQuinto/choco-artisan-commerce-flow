@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -96,6 +95,9 @@ interface Store {
   resetFilters: () => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  
+  // Order actions
+  completeOrder: () => void;
   
   // Utility actions
   clearUserData: () => void;
@@ -230,9 +232,6 @@ export const useStore = create<Store>()(
             isLoading: false
           }
         });
-        // Optionally clear cart and wishlist on logout
-        // get().clearCart();
-        // get().clearWishlist();
       },
       
       updateUser: (userData) => {
@@ -296,6 +295,12 @@ export const useStore = create<Store>()(
       
       setError: (error) => {
         set({ error });
+      },
+      
+      // Order actions
+      completeOrder: () => {
+        // Clear the cart when order is completed
+        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
       },
       
       // Utility actions

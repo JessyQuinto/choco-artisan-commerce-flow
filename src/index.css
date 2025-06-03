@@ -7,34 +7,24 @@
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
-
     --radius: 0.5rem;
-
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
@@ -82,38 +72,93 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-primary-white text-primary-text;
+    margin: 0;
+    padding: 0;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif;
   }
 
-  /* Asegurar que los botones sean siempre visibles */
-  button {
-    position: relative;
-    z-index: 1;
+  /* Colores personalizados del proyecto */
+  .text-primary-text {
+    color: #181311 !important;
   }
-  
-  /* Mejorar contraste de botones */
-  .bg-primary-action {
+
+  .text-primary-secondary {
+    color: #886f63 !important;
+  }
+
+  .bg-primary-background {
+    background-color: #f4f2f0 !important;
+  }
+
+  .bg-primary-white {
+    background-color: #ffffff !important;
+  }
+
+  .bg-primary-action,
+  .bg-action {
     background-color: #e55d19 !important;
-    border-color: #e55d19 !important;
+    color: white !important;
   }
   
-  .hover\:bg-primary-action\/90:hover {
+  .hover\:bg-primary-action\/90:hover,
+  .hover\:bg-action\/90:hover {
     background-color: rgba(229, 93, 25, 0.9) !important;
   }
   
-  .border-primary-action {
-    border-color: #e55d19 !important;
-  }
-  
-  .text-primary-action {
+  .text-primary-action,
+  .text-action {
     color: #e55d19 !important;
   }
 
-  /* Arreglar line-clamp que puede no estar disponible */
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  /* Asegurar visibilidad de todos los elementos */
+  h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label {
+    color: inherit;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Buttons siempre visibles */
+  button, 
+  .btn,
+  [role="button"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Cards y contenido */
+  .card,
+  [class*="card"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Navigation y header */
+  header,
+  nav,
+  .navigation {
+    opacity: 1 !important;
+    visibility: visible !important;
+    z-index: 50;
+  }
+
+  /* Forms */
+  form {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Eliminar animaciones que puedan causar problemas */
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Solo mantener transiciones básicas en hover */
+  button:hover,
+  a:hover {
+    transition: background-color 0.15s ease !important;
   }
 }
