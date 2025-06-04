@@ -1,22 +1,15 @@
 
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary-text text-white relative z-10 w-full">
+    <footer className="bg-amber-900 text-white relative z-10 w-full">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
         <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
           {/* Brand */}
           <div className="space-y-3 sm:space-y-4 xs:col-span-2 md:col-span-1">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-8 h-8 xs:w-10 xs:h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-primary-action to-amber-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm xs:text-lg sm:text-xl">C</span>
-              </div>
-              <div>
-                <h3 className="text-lg xs:text-xl sm:text-2xl font-bold">Chocó Artesanal</h3>
-                <p className="text-xs xs:text-sm text-gray-300">Tesoros del Pacífico</p>
-              </div>
-            </div>
+            <Logo size="md" variant="white" showText={true} />
             <p className="text-gray-300 text-xs xs:text-sm sm:text-base leading-relaxed max-w-sm">
               Conectando el talento artesanal afrocolombiano con el mundo, 
               preservando tradiciones y creando oportunidades justas.

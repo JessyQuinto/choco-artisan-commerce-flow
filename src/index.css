@@ -110,6 +110,27 @@
     color: #e55d19 !important;
   }
 
+  /* Colores de café adicionales */
+  .bg-brown-900 {
+    background-color: #7c2d12 !important;
+  }
+  
+  .bg-brown-800 {
+    background-color: #9a3412 !important;
+  }
+  
+  .bg-brown-700 {
+    background-color: #a16207 !important;
+  }
+  
+  .text-brown-100 {
+    color: #fef3c7 !important;
+  }
+  
+  .text-brown-200 {
+    color: #fde68a !important;
+  }
+
   /* Asegurar visibilidad de todos los elementos */
   h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label {
     color: inherit;

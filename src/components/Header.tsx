@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore, useAuth } from "@/store/useStore";
+import Logo from "./Logo";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -41,14 +42,8 @@ const Header = () => {
       <div className="container mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 group" onClick={closeMenu}>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary-action to-amber-500 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
-              <span className="text-white font-bold text-base sm:text-lg md:text-xl">C</span>
-            </div>
-            <div className="hidden xs:block">
-              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-primary">Chocó Artesanal</h1>
-              <p className="text-xs md:text-sm text-secondary -mt-1 hidden sm:block">Tesoros del Pacífico</p>
-            </div>
+          <Link to="/" className="flex items-center group" onClick={closeMenu}>
+            <Logo size="sm" variant="default" showText={true} className="transform group-hover:scale-105 transition-transform" />
           </Link>
 
           {/* Desktop Navigation */}
