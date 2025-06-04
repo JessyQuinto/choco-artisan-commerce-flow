@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -162,6 +163,9 @@ export const useStore = create<Store>()(
         const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
         const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
+        // Update last activity timestamp
+        localStorage.setItem('lastCartActivity', Date.now().toString());
+        
         set({
           cartItems: newCartItems,
           cartCount: newCount,
@@ -174,6 +178,8 @@ export const useStore = create<Store>()(
         const newCartItems = cartItems.filter(item => item.id !== productId);
         const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
         const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
+        
+        localStorage.setItem('lastCartActivity', Date.now().toString());
         
         set({
           cartItems: newCartItems,
@@ -195,6 +201,8 @@ export const useStore = create<Store>()(
         const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
         const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
+        localStorage.setItem('lastCartActivity', Date.now().toString());
+        
         set({
           cartItems: newCartItems,
           cartCount: newCount,
@@ -211,8 +219,9 @@ export const useStore = create<Store>()(
         return cartItems.reduce((sum, item) => sum + item.total, 0);
       },
       
-      // Auth actions
+      // Auth actions - Simplified without API calls
       login: (userData, token) => {
+        localStorage.setItem('lastCartActivity', Date.now().toString());
         set({
           auth: {
             user: userData,
@@ -299,7 +308,6 @@ export const useStore = create<Store>()(
       
       // Order actions
       completeOrder: () => {
-        // Clear the cart when order is completed
         set({ cartItems: [], cartCount: 0, cartTotal: 0 });
       },
       

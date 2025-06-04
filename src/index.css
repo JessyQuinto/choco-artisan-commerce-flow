@@ -69,6 +69,13 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -76,89 +83,117 @@
     margin: 0;
     padding: 0;
     font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Colores personalizados del proyecto */
-  .text-primary-text {
-    color: #181311 !important;
+  /* Performance optimizations */
+  img {
+    content-visibility: auto;
+    contain-intrinsic-size: 300px 200px;
   }
 
-  .text-primary-secondary {
-    color: #886f63 !important;
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    body {
+      font-size: 14px;
+    }
+    
+    h1 {
+      font-size: 1.8rem;
+    }
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+    
+    h3 {
+      font-size: 1.3rem;
+    }
   }
 
-  .bg-primary-background {
-    background-color: #f4f2f0 !important;
-  }
-
-  .bg-primary-white {
-    background-color: #ffffff !important;
-  }
-
-  .bg-primary-action,
-  .bg-action {
-    background-color: #e55d19 !important;
-    color: white !important;
-  }
-  
-  .hover\:bg-primary-action\/90:hover,
-  .hover\:bg-action\/90:hover {
-    background-color: rgba(229, 93, 25, 0.9) !important;
-  }
-  
-  .text-primary-action,
-  .text-action {
-    color: #e55d19 !important;
-  }
-
-  /* Asegurar visibilidad de todos los elementos */
-  h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label {
-    color: inherit;
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Buttons siempre visibles */
+  /* Touch improvements for mobile */
   button, 
-  .btn,
-  [role="button"] {
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative;
-    z-index: 10;
+  [role="button"],
+  a {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  /* Cards y contenido */
-  .card,
-  [class*="card"] {
-    opacity: 1 !important;
-    visibility: visible !important;
+  /* Improved focus visibility */
+  :focus-visible {
+    outline: 2px solid #e55d19;
+    outline-offset: 2px;
   }
 
-  /* Navigation y header */
-  header,
-  nav,
-  .navigation {
-    opacity: 1 !important;
-    visibility: visible !important;
-    z-index: 50;
-  }
-
-  /* Forms */
-  form {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-
-  /* Eliminar animaciones que puedan causar problemas */
+  /* Smooth transitions */
   * {
-    transition: none !important;
-    animation: none !important;
+    transition-property: color, background-color, border-color, opacity, transform;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Solo mantener transiciones básicas en hover */
-  button:hover,
-  a:hover {
-    transition: background-color 0.15s ease !important;
+  /* Utility classes */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Loading states */
+  .skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+  }
+
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
