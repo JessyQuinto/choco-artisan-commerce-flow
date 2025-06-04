@@ -146,9 +146,9 @@ const Shop = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="flex justify-center items-center py-32">
+        <div className="flex justify-center items-center py-32 flex-1">
           <LoadingSpinner size="lg" text="Cargando productos..." />
         </div>
         <Footer />
@@ -157,11 +157,11 @@ const Shop = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <Breadcrumb className="mb-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 flex-1">
+        <Breadcrumb className="mb-6 sm:mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
@@ -173,48 +173,48 @@ const Shop = () => {
           </BreadcrumbList>
         </Breadcrumb>
 
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary mb-8">
+        <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-bold text-primary mb-6 sm:mb-8 leading-tight">
           Nuestra Tienda
         </h1>
 
         {/* Controles superiores */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-8 space-y-4 lg:space-y-0 gap-4">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0 gap-3 sm:gap-4">
+          <div className="flex items-center space-x-2 sm:space-x-4 w-full sm:w-auto">
             <Button
               variant="outline"
               onClick={() => setShowFilters(!showFilters)}
-              className="lg:hidden border-action text-action hover:bg-action hover:text-white"
+              className="lg:hidden border-action text-action hover:bg-action hover:text-white text-sm xs:text-base flex-1 sm:flex-none"
             >
               <SlidersHorizontal className="h-4 w-4 mr-2" />
               Filtros
             </Button>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("grid")}
-                className={viewMode === "grid" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"}
+                className={`${viewMode === "grid" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"} p-2 xs:px-3`}
               >
-                <Grid className="h-4 w-4" />
+                <Grid className="h-3 w-3 xs:h-4 xs:w-4" />
               </Button>
               <Button
                 variant={viewMode === "list" ? "default" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("list")}
-                className={viewMode === "list" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"}
+                className={`${viewMode === "list" ? "bg-action hover:bg-action/90" : "border-action text-action hover:bg-action hover:text-white"} p-2 xs:px-3`}
               >
-                <List className="h-4 w-4" />
+                <List className="h-3 w-3 xs:h-4 xs:w-4" />
               </Button>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="sort" className="text-primary font-medium whitespace-nowrap">
+          <div className="flex flex-col xs:flex-row items-start xs:items-center space-y-2 xs:space-y-0 xs:space-x-3 sm:space-x-4 w-full sm:w-auto">
+            <Label htmlFor="sort" className="text-primary font-medium whitespace-nowrap text-sm xs:text-base">
               Ordenar por:
             </Label>
             <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange("sortBy", value)}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full xs:w-48 h-9 xs:h-10 text-sm xs:text-base">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
               <SelectContent>
@@ -226,24 +226,24 @@ const Shop = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-6 sm:gap-8">
           {/* Sidebar de filtros */}
-          <div className={`lg:w-1/4 space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-background border border-secondary/20 rounded-xl p-6 shadow-lg">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-primary flex items-center">
-                  <Filter className="h-5 w-5 mr-2" />
+          <div className={`lg:w-1/4 space-y-4 sm:space-y-6 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+            <div className="bg-background border border-secondary/20 rounded-xl p-4 sm:p-6 shadow-lg">
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="text-base xs:text-lg font-semibold text-primary flex items-center">
+                  <Filter className="h-4 w-4 xs:h-5 xs:w-5 mr-2" />
                   Filtros
                 </h3>
-                <Button variant="ghost" size="sm" onClick={clearFilters} className="text-action hover:text-action/80">
+                <Button variant="ghost" size="sm" onClick={clearFilters} className="text-action hover:text-action/80 text-xs xs:text-sm px-2 xs:px-3">
                   Limpiar
                 </Button>
               </div>
 
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Búsqueda */}
                 <div>
-                  <Label htmlFor="search" className="text-primary font-medium mb-2 block">
+                  <Label htmlFor="search" className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Buscar
                   </Label>
                   <Input
@@ -252,17 +252,17 @@ const Shop = () => {
                     placeholder="Buscar productos..."
                     value={filters.search}
                     onChange={(e) => handleFilterChange("search", e.target.value)}
-                    className="border-secondary/30 focus:border-action"
+                    className="border-secondary/30 focus:border-action h-9 xs:h-10 text-sm xs:text-base"
                   />
                 </div>
 
                 {/* Categoría */}
                 <div>
-                  <Label className="text-primary font-medium mb-2 block">
+                  <Label className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Categoría
                   </Label>
                   <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 xs:h-10 text-sm xs:text-base">
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent>
@@ -279,11 +279,11 @@ const Shop = () => {
 
                 {/* Rango de precio */}
                 <div>
-                  <Label className="text-primary font-medium mb-2 block">
+                  <Label className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Rango de Precio
                   </Label>
                   <Select value={filters.priceRange} onValueChange={(value) => handleFilterChange("priceRange", value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 xs:h-10 text-sm xs:text-base">
                       <SelectValue placeholder="Seleccionar rango" />
                     </SelectTrigger>
                     <SelectContent>
@@ -297,7 +297,7 @@ const Shop = () => {
 
                 {/* Artesano */}
                 <div>
-                  <Label htmlFor="artisan" className="text-primary font-medium mb-2 block">
+                  <Label htmlFor="artisan" className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Artesano
                   </Label>
                   <Input
@@ -306,7 +306,7 @@ const Shop = () => {
                     placeholder="Buscar por artesano..."
                     value={filters.artisan}
                     onChange={(e) => handleFilterChange("artisan", e.target.value)}
-                    className="border-secondary/30 focus:border-action"
+                    className="border-secondary/30 focus:border-action h-9 xs:h-10 text-sm xs:text-base"
                   />
                 </div>
               </div>
@@ -316,28 +316,28 @@ const Shop = () => {
           {/* Productos */}
           <div className="flex-1">
             {filteredProducts.length === 0 ? (
-              <div className="text-center py-16">
-                <h2 className="text-xl md:text-2xl font-semibold text-primary mb-4">
+              <div className="text-center py-12 sm:py-16 lg:py-20">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-semibold text-primary mb-3 sm:mb-4">
                   No se encontraron productos
                 </h2>
-                <p className="text-secondary mb-8">
+                <p className="text-secondary mb-6 sm:mb-8 text-sm xs:text-base">
                   Intenta ajustar los filtros o la búsqueda
                 </p>
-                <Button onClick={clearFilters} className="bg-action hover:bg-action/90 text-white">
+                <Button onClick={clearFilters} className="bg-action hover:bg-action/90 text-white px-4 xs:px-6 py-2 xs:py-3 text-sm xs:text-base">
                   Limpiar Filtros
                 </Button>
               </div>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-6">
-                  <p className="text-secondary">
+                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                  <p className="text-secondary text-sm xs:text-base">
                     {filteredProducts.length} {filteredProducts.length === 1 ? 'producto encontrado' : 'productos encontrados'}
                   </p>
                 </div>
 
                 <div className={viewMode === "grid" 
-                  ? "grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-8"
-                  : "space-y-6"
+                  ? "grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+                  : "space-y-4 sm:space-y-6"
                 }>
                   {filteredProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />

@@ -5,32 +5,32 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 
 const Terms = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <Breadcrumb className="mb-8">
+      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <Breadcrumb className="mb-4 sm:mb-6 lg:mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Términos y Condiciones</BreadcrumbPage>
+              <BreadcrumbPage className="text-xs xs:text-sm">Términos y Condiciones</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-8 text-center">
+          <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-6 sm:mb-8 text-center leading-tight">
             Términos y Condiciones
           </h1>
 
           <div className="prose max-w-none">
-            <div className="bg-background border border-secondary/20 rounded-xl p-8 shadow-lg space-y-8">
+            <div className="bg-background border border-secondary/20 rounded-xl p-4 xs:p-5 sm:p-6 lg:p-8 shadow-lg space-y-6 sm:space-y-8">
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">1. Aceptación de los Términos</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">1. Aceptación de los Términos</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Al acceder y utilizar el sitio web de Chocó Artesanal, usted acepta estar sujeto a estos 
                   términos y condiciones de uso. Si no está de acuerdo con alguno de estos términos, 
                   no debe utilizar este sitio web.
@@ -38,8 +38,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">2. Descripción del Servicio</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">2. Descripción del Servicio</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Chocó Artesanal es una plataforma de comercio electrónico que facilita la venta de 
                   productos artesanales elaborados por comunidades del Pacífico colombiano. Nos 
                   comprometemos a ofrecer productos auténticos y de alta calidad.
@@ -47,8 +47,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">3. Productos y Precios</h2>
-                <div className="text-secondary leading-relaxed space-y-3">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">3. Productos y Precios</h2>
+                <div className="text-secondary leading-relaxed space-y-2 xs:space-y-3 text-sm xs:text-base">
                   <p>
                     • Todos los productos son artesanales y pueden presentar variaciones naturales en tamaño, 
                     color y diseño que los hacen únicos.
@@ -63,8 +63,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">4. Política de Envíos</h2>
-                <div className="text-secondary leading-relaxed space-y-3">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">4. Política de Envíos</h2>
+                <div className="text-secondary leading-relaxed space-y-2 xs:space-y-3 text-sm xs:text-base">
                   <p>
                     • Los envíos se realizan a nivel nacional en Colombia.
                   </p>
@@ -78,8 +78,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">5. Política de Devoluciones</h2>
-                <div className="text-secondary leading-relaxed space-y-3">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">5. Política de Devoluciones</h2>
+                <div className="text-secondary leading-relaxed space-y-2 xs:space-y-3 text-sm xs:text-base">
                   <p>
                     • Aceptamos devoluciones dentro de los 15 días posteriores a la recepción del producto.
                   </p>
@@ -94,8 +94,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">6. Privacidad y Protección de Datos</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">6. Privacidad y Protección de Datos</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Respetamos su privacidad y nos comprometemos a proteger sus datos personales de acuerdo 
                   con la Ley de Protección de Datos Personales de Colombia. Su información solo será 
                   utilizada para procesar pedidos y mejorar nuestros servicios.
@@ -103,8 +103,8 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">7. Limitación de Responsabilidad</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">7. Limitación de Responsabilidad</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Chocó Artesanal no será responsable por daños indirectos, incidentales o consecuentes 
                   que puedan surgir del uso de nuestros productos o servicios, más allá de lo establecido 
                   por la ley colombiana.
@@ -112,23 +112,23 @@ const Terms = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">8. Modificaciones</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">8. Modificaciones</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Nos reservamos el derecho de modificar estos términos y condiciones en cualquier momento. 
                   Las modificaciones entrarán en vigor inmediatamente después de su publicación en el sitio web.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-primary mb-4">9. Contacto</h2>
-                <p className="text-secondary leading-relaxed">
+                <h2 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">9. Contacto</h2>
+                <p className="text-secondary leading-relaxed text-sm xs:text-base">
                   Para cualquier consulta sobre estos términos y condiciones, puede contactarnos a través 
                   de nuestro formulario de contacto o enviando un email a info@chocoartesanal.com.
                 </p>
               </section>
 
-              <div className="text-center pt-6 border-t border-secondary/20">
-                <p className="text-secondary text-sm">
+              <div className="text-center pt-4 sm:pt-6 border-t border-secondary/20">
+                <p className="text-secondary text-xs xs:text-sm">
                   Última actualización: {new Date().toLocaleDateString('es-CO', { 
                     year: 'numeric', 
                     month: 'long', 

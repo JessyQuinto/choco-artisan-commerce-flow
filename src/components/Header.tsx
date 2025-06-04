@@ -1,4 +1,3 @@
-
 import { ShoppingCart, Search, Menu, User, LogOut, X, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,66 +36,53 @@ const Header = () => {
     closeMenu();
   };
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    closeMenu();
-  };
-
   return (
-    <header className="bg-background shadow-sm border-b border-secondary/20 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-sm">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-20">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-action to-secondary rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm md:text-lg">C</span>
+          <Link to="/" className="flex items-center space-x-2 group" onClick={closeMenu}>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-primary-action to-amber-500 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform">
+              <span className="text-white font-bold text-base sm:text-lg md:text-xl">C</span>
             </div>
-            <div>
-              <h1 className="text-lg md:text-xl font-bold text-primary">
-                <Link to="/">Chocó Artesanal</Link>
-              </h1>
-              <p className="text-xs text-secondary hidden sm:block">Tesoros del Pacífico</p>
+            <div className="hidden xs:block">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-primary">Chocó Artesanal</h1>
+              <p className="text-xs md:text-sm text-secondary -mt-1 hidden sm:block">Tesoros del Pacífico</p>
             </div>
-          </div>
+          </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            <Link to="/" className="text-primary hover:text-action font-medium transition-colors">
+          <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
+            <Link to="/" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Inicio
             </Link>
-            <Link to="/shop" className="text-primary hover:text-action font-medium transition-colors">
+            <Link to="/shop" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Tienda
             </Link>
-            <button 
-              onClick={() => scrollToSection('historias')}
-              className="text-primary hover:text-action font-medium transition-colors"
-            >
+            <Link to="/stories" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Historias
-            </button>
-            <Link to="/about" className="text-primary hover:text-action font-medium transition-colors">
+            </Link>
+            <Link to="/about" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Sobre Nosotros
             </Link>
-            <Link to="/contact" className="text-primary hover:text-action font-medium transition-colors">
+            <Link to="/contact" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Contacto
             </Link>
           </nav>
 
           {/* Search Desktop */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             {isSearchOpen ? (
-              <form onSubmit={handleSearch} className="flex items-center space-x-2">
+              <form onSubmit={handleSearch} className="flex items-center space-x-2 animate-in slide-in-from-right duration-200">
                 <Input
                   type="text"
                   placeholder="Buscar productos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 text-sm border-secondary/30 focus:border-action"
+                  className="w-48 lg:w-64 text-sm border-secondary/30 focus:border-action"
                   autoFocus
                 />
-                <Button type="submit" size="sm" className="bg-action hover:bg-action/90">
+                <Button type="submit" size="sm" className="bg-action hover:bg-action/90 shrink-0">
                   <Search className="h-4 w-4" />
                 </Button>
                 <Button 
@@ -104,6 +90,7 @@ const Header = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setIsSearchOpen(false)}
+                  className="shrink-0"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -112,7 +99,7 @@ const Header = () => {
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-secondary hover:text-action hover:bg-background p-2"
+                className="text-secondary hover:text-action hover:bg-background p-2 rounded-lg"
                 onClick={() => setIsSearchOpen(true)}
               >
                 <Search className="h-4 w-4" />
@@ -121,31 +108,31 @@ const Header = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-1 md:space-x-2">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             {/* Mobile Search */}
             <Button 
               variant="ghost" 
               size="sm" 
-              className="md:hidden text-secondary hover:text-action hover:bg-background p-2"
+              className="md:hidden text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
             >
               <Search className="h-4 w-4" />
             </Button>
             
             {/* Auth Section - Hidden on small screens when menu is closed */}
-            <div className="hidden md:flex items-center space-x-2">
+            <div className="hidden md:flex items-center space-x-1 lg:space-x-2">
               {isLoggedIn && user ? (
                 <>
-                  <Button variant="ghost" size="sm" className="text-secondary hover:text-action hover:bg-background" asChild>
-                    <Link to="/profile" className="flex items-center space-x-1">
+                  <Button variant="ghost" size="sm" className="text-secondary hover:text-action hover:bg-action/5 rounded-lg" asChild>
+                    <Link to="/profile" className="flex items-center space-x-1 py-2 px-3">
                       <User className="h-4 w-4" />
-                      <span className="hidden lg:inline">{user.firstName || user.name}</span>
+                      <span className="hidden lg:inline text-sm">{user.firstName || user.name}</span>
                     </Link>
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-secondary hover:text-action hover:bg-background p-2"
+                    className="text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4" />
@@ -153,10 +140,10 @@ const Header = () => {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" className="text-secondary hover:text-action hover:bg-background text-xs lg:text-sm" asChild>
+                  <Button variant="ghost" size="sm" className="text-secondary hover:text-action hover:bg-action/5 text-xs lg:text-sm py-2 px-3 rounded-lg" asChild>
                     <Link to="/login">Iniciar Sesión</Link>
                   </Button>
-                  <Button size="sm" className="bg-action hover:bg-action/90 text-white text-xs lg:text-sm" asChild>
+                  <Button size="sm" className="bg-action hover:bg-action/90 text-white text-xs lg:text-sm py-2 px-3 rounded-lg shadow-md hover:shadow-lg transition-all" asChild>
                     <Link to="/register">Registrarse</Link>
                   </Button>
                 </>
@@ -164,11 +151,11 @@ const Header = () => {
             </div>
 
             {/* Wishlist */}
-            <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-background p-2" asChild>
+            <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg" asChild>
               <Link to="/wishlist">
                 <Heart className="h-4 w-4" />
                 {wishlist.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs">
+                  <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs font-medium shadow-md">
                     {wishlist.length}
                   </span>
                 )}
@@ -176,11 +163,11 @@ const Header = () => {
             </Button>
 
             {/* Cart */}
-            <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-background p-2" asChild>
+            <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg" asChild>
               <Link to="/cart">
                 <ShoppingCart className="h-4 w-4" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs">
+                  <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs font-medium shadow-md">
                     {cartCount}
                   </span>
                 )}
@@ -191,27 +178,27 @@ const Header = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="lg:hidden text-secondary hover:text-action hover:bg-background p-2"
+              className="lg:hidden text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg ml-1"
               onClick={toggleMenu}
             >
-              {isMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
         {/* Mobile Search */}
         {isSearchOpen && (
-          <div className="md:hidden border-t border-secondary/20 py-4 bg-background">
+          <div className="md:hidden border-t border-secondary/20 py-3 bg-background animate-in slide-in-from-top duration-200">
             <form onSubmit={handleSearch} className="flex items-center space-x-2">
               <Input
                 type="text"
                 placeholder="Buscar productos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 text-sm border-secondary/30 focus:border-action"
+                className="flex-1 text-sm border-secondary/30 focus:border-action rounded-lg"
                 autoFocus
               />
-              <Button type="submit" size="sm" className="bg-action hover:bg-action/90">
+              <Button type="submit" size="sm" className="bg-action hover:bg-action/90 rounded-lg shadow-md">
                 <Search className="h-4 w-4" />
               </Button>
             </form>
@@ -220,75 +207,76 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="lg:hidden border-t border-secondary/20 py-4 bg-background">
-            <nav className="flex flex-col space-y-3">
+          <div className="lg:hidden border-t border-secondary/20 py-4 bg-background animate-in slide-in-from-top duration-200">
+            <nav className="flex flex-col space-y-1">
               <Link 
                 to="/" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
+                className="text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                 onClick={closeMenu}
               >
                 Inicio
               </Link>
               <Link 
                 to="/shop" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
+                className="text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                 onClick={closeMenu}
               >
                 Tienda
               </Link>
-              <button 
-                onClick={() => scrollToSection('historias')}
-                className="text-primary hover:text-action font-medium py-2 transition-colors text-left"
+              <Link 
+                to="/stories" 
+                className="text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
+                onClick={closeMenu}
               >
                 Historias
-              </button>
+              </Link>
               <Link 
                 to="/about" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
+                className="text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                 onClick={closeMenu}
               >
                 Sobre Nosotros
               </Link>
               <Link 
                 to="/contact" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
+                className="text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                 onClick={closeMenu}
               >
                 Contacto
               </Link>
               
               {/* Auth Section in Mobile Menu */}
-              <div className="border-t border-secondary/20 pt-3 mt-2">
+              <div className="border-t border-secondary/20 pt-3 mt-3">
                 {isLoggedIn && user ? (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Link 
                       to="/profile" 
-                      className="flex items-center space-x-2 text-primary hover:text-action font-medium py-2 transition-colors"
+                      className="flex items-center space-x-3 text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                       onClick={closeMenu}
                     >
-                      <User className="h-4 w-4" />
+                      <User className="h-5 w-5" />
                       <span>{user.firstName || user.name}</span>
                     </Link>
                     <button 
-                      className="flex items-center space-x-2 text-primary hover:text-action font-medium py-2 transition-colors"
+                      className="flex items-center space-x-3 text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all w-full text-left"
                       onClick={handleLogout}
                     >
-                      <LogOut className="h-4 w-4" />
+                      <LogOut className="h-5 w-5" />
                       <span>Cerrar Sesión</span>
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <Link 
                       to="/login" 
-                      className="block text-primary hover:text-action font-medium py-2 transition-colors"
+                      className="block text-primary hover:text-action hover:bg-action/5 font-medium py-3 px-4 rounded-lg transition-all"
                       onClick={closeMenu}
                     >
                       Iniciar Sesión
                     </Link>
                     <Link 
                       to="/register" 
-                      className="block text-action hover:text-action/80 font-medium py-2 transition-colors"
+                      className="block bg-action hover:bg-action/90 text-white font-medium py-3 px-4 rounded-lg transition-all shadow-md"
                       onClick={closeMenu}
                     >
                       Registrarse

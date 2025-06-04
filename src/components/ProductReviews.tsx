@@ -99,21 +99,21 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
     : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-primary-text mb-4">
+        <h3 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary-text mb-3 sm:mb-4">
           Reseñas ({reviews.length})
         </h3>
         
         {reviews.length > 0 && (
-          <div className="flex items-center space-x-4 mb-6 p-4 bg-primary-background rounded-lg">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary-text">
+          <div className="flex flex-col xs:flex-row xs:items-center space-y-3 xs:space-y-0 xs:space-x-4 mb-4 sm:mb-6 p-3 xs:p-4 bg-primary-background rounded-lg">
+            <div className="text-center xs:text-left">
+              <div className="text-xl xs:text-2xl font-bold text-primary-text">
                 {averageRating.toFixed(1)}
               </div>
               {renderStars(Math.round(averageRating))}
             </div>
-            <div className="text-primary-secondary">
+            <div className="text-primary-secondary text-sm xs:text-base text-center xs:text-left">
               Basado en {reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'}
             </div>
           </div>
@@ -121,51 +121,53 @@ const ProductReviews = ({ productId }: ProductReviewsProps) => {
       </div>
 
       {/* Formulario para nueva reseña */}
-      <div className="border border-primary-secondary/20 rounded-lg p-6 space-y-4">
-        <h4 className="font-semibold text-primary-text">Escribir una reseña</h4>
+      <div className="border border-primary-secondary/20 rounded-lg p-4 xs:p-5 sm:p-6 space-y-3 xs:space-y-4">
+        <h4 className="font-semibold text-primary-text text-sm xs:text-base">Escribir una reseña</h4>
         
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-primary-text">Calificación</label>
+        <div className="space-y-1 xs:space-y-2">
+          <label className="text-xs xs:text-sm font-medium text-primary-text">Calificación</label>
           {renderStars(newReview.rating, true, (rating) => 
             setNewReview(prev => ({ ...prev, rating }))
           )}
         </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-primary-text">Comentario</label>
+        <div className="space-y-1 xs:space-y-2">
+          <label className="text-xs xs:text-sm font-medium text-primary-text">Comentario</label>
           <Textarea
             value={newReview.comment}
             onChange={(e) => setNewReview(prev => ({ ...prev, comment: e.target.value }))}
             placeholder="Comparte tu experiencia con este producto..."
-            className="min-h-20"
+            className="min-h-16 xs:min-h-20 text-sm xs:text-base"
           />
         </div>
 
         <Button 
           onClick={handleSubmitReview}
-          className="bg-primary-action hover:bg-primary-action/90 text-white"
+          className="bg-primary-action hover:bg-primary-action/90 text-white w-full xs:w-auto text-sm xs:text-base px-4 xs:px-6 py-2 xs:py-3"
         >
           Enviar Reseña
         </Button>
       </div>
 
       {/* Lista de reseñas */}
-      <div className="space-y-4">
+      <div className="space-y-3 xs:space-y-4">
         {reviews.map((review) => (
-          <div key={review.id} className="border border-primary-secondary/20 rounded-lg p-4 space-y-3">
-            <div className="flex items-start justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-primary-background rounded-full">
-                  <User className="h-4 w-4 text-primary-secondary" />
+          <div key={review.id} className="border border-primary-secondary/20 rounded-lg p-3 xs:p-4 space-y-2 xs:space-y-3">
+            <div className="flex flex-col xs:flex-row xs:items-start xs:justify-between space-y-2 xs:space-y-0">
+              <div className="flex items-center space-x-2 xs:space-x-3">
+                <div className="flex items-center justify-center w-6 h-6 xs:w-8 xs:h-8 bg-primary-background rounded-full">
+                  <User className="h-3 w-3 xs:h-4 xs:w-4 text-primary-secondary" />
                 </div>
                 <div>
-                  <div className="font-medium text-primary-text">{review.user}</div>
-                  <div className="text-sm text-primary-secondary">{review.date}</div>
+                  <div className="font-medium text-primary-text text-sm xs:text-base">{review.user}</div>
+                  <div className="text-xs xs:text-sm text-primary-secondary">{review.date}</div>
                 </div>
               </div>
-              {renderStars(review.rating)}
+              <div className="ml-8 xs:ml-0">
+                {renderStars(review.rating)}
+              </div>
             </div>
-            <p className="text-primary-secondary leading-relaxed">{review.comment}</p>
+            <p className="text-primary-secondary leading-relaxed text-sm xs:text-base">{review.comment}</p>
           </div>
         ))}
       </div>

@@ -94,22 +94,22 @@ const Register = () => {
     <div className="min-h-screen bg-white">
       <Header />
       
-      <main className="container mx-auto px-4 py-16">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         <div className="max-w-md mx-auto">
-          <div className="bg-white border border-secondary/20 rounded-xl p-8 shadow-lg">
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-primary mb-2">
+          <div className="bg-white border border-secondary/20 rounded-xl p-4 xs:p-6 sm:p-8 shadow-lg">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-2xl xs:text-3xl font-bold text-primary mb-2 leading-tight">
                 Crear Cuenta
               </h1>
-              <p className="text-secondary">
+              <p className="text-secondary text-sm xs:text-base">
                 Únete a la comunidad de Chocó Artesanal
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-4 xs:space-y-6">
+              <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 xs:gap-4">
                 <div>
-                  <Label htmlFor="firstName" className="text-primary">
+                  <Label htmlFor="firstName" className="text-primary text-sm xs:text-base">
                     Nombre
                   </Label>
                   <Input
@@ -119,12 +119,12 @@ const Register = () => {
                     required
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    className="mt-1 border-secondary/30 focus:border-action"
+                    className="mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base border-secondary/30 focus:border-action"
                     placeholder="Tu nombre"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lastName" className="text-primary">
+                  <Label htmlFor="lastName" className="text-primary text-sm xs:text-base">
                     Apellido
                   </Label>
                   <Input
@@ -134,14 +134,14 @@ const Register = () => {
                     required
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    className="mt-1 border-secondary/30 focus:border-action"
+                    className="mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base border-secondary/30 focus:border-action"
                     placeholder="Tu apellido"
                   />
                 </div>
               </div>
 
               <div>
-                <Label htmlFor="email" className="text-primary">
+                <Label htmlFor="email" className="text-primary text-sm xs:text-base">
                   Correo Electrónico
                 </Label>
                 <Input
@@ -151,13 +151,13 @@ const Register = () => {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="mt-1 border-secondary/30 focus:border-action"
+                  className="mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base border-secondary/30 focus:border-action"
                   placeholder="tu@email.com"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-primary">
+                <Label htmlFor="password" className="text-primary text-sm xs:text-base">
                   Contraseña
                 </Label>
                 <Input
@@ -167,13 +167,13 @@ const Register = () => {
                   required
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="mt-1 border-secondary/30 focus:border-action"
+                  className="mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base border-secondary/30 focus:border-action"
                   placeholder="Mínimo 6 caracteres"
                 />
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword" className="text-primary">
+                <Label htmlFor="confirmPassword" className="text-primary text-sm xs:text-base">
                   Confirmar Contraseña
                 </Label>
                 <Input
@@ -183,20 +183,21 @@ const Register = () => {
                   required
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className="mt-1 border-secondary/30 focus:border-action"
+                  className="mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base border-secondary/30 focus:border-action"
                   placeholder="Repite tu contraseña"
                 />
               </div>
 
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-2 xs:space-x-3">
                 <Checkbox
                   id="terms"
                   checked={acceptTerms}
                   onCheckedChange={(checked) => {
                     setAcceptTerms(checked === true);
                   }}
+                  className="mt-0.5"
                 />
-                <label htmlFor="terms" className="text-sm text-secondary leading-relaxed cursor-pointer">
+                <label htmlFor="terms" className="text-xs xs:text-sm text-secondary leading-relaxed cursor-pointer">
                   Acepto los{" "}
                   <Link to="/terms" className="text-action hover:underline">
                     términos y condiciones
@@ -211,14 +212,14 @@ const Register = () => {
               <Button
                 type="submit"
                 disabled={loading || !acceptTerms}
-                className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
+                className="w-full bg-action hover:bg-action/90 text-white py-2.5 xs:py-3 text-sm xs:text-base lg:text-lg font-semibold disabled:opacity-50"
               >
                 {loading ? "Creando cuenta..." : "Crear Cuenta"}
               </Button>
             </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-secondary">
+            <div className="mt-4 xs:mt-6 text-center">
+              <p className="text-secondary text-sm xs:text-base">
                 ¿Ya tienes una cuenta?{" "}
                 <Link to="/login" className="text-action hover:underline font-semibold">
                   Inicia sesión

@@ -96,8 +96,8 @@ const Login = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <Breadcrumb className="mb-8">
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <Breadcrumb className="mb-4 sm:mb-6 lg:mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
@@ -110,31 +110,31 @@ const Login = () => {
         </Breadcrumb>
         
         <div className="max-w-md mx-auto">
-          <div className="bg-white border border-secondary/20 rounded-xl p-8 shadow-lg">
-            <div className="text-center mb-8">
-              <div className="mx-auto w-12 h-12 bg-action rounded-full flex items-center justify-center mb-4">
-                <LogIn className="h-6 w-6 text-white" />
+          <div className="bg-white border border-secondary/20 rounded-xl p-4 xs:p-6 sm:p-8 shadow-lg">
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="mx-auto w-10 h-10 xs:w-12 xs:h-12 bg-action rounded-full flex items-center justify-center mb-3 xs:mb-4">
+                <LogIn className="h-5 w-5 xs:h-6 xs:w-6 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-primary mb-2">
+              <h1 className="text-2xl xs:text-3xl font-bold text-primary mb-2 leading-tight">
                 Iniciar Sesión
               </h1>
-              <p className="text-secondary">
+              <p className="text-secondary text-sm xs:text-base">
                 Accede a tu cuenta de Chocó Artesanal
               </p>
             </div>
 
             {/* Demo credentials */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <h3 className="font-semibold text-blue-800 mb-2">Credenciales de prueba:</h3>
-              <p className="text-sm text-blue-700">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 xs:p-4 mb-4 xs:mb-6">
+              <h3 className="font-semibold text-blue-800 mb-2 text-sm xs:text-base">Credenciales de prueba:</h3>
+              <p className="text-xs xs:text-sm text-blue-700">
                 <strong>Email:</strong> admin@choco.com<br />
                 <strong>Contraseña:</strong> password
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 xs:space-y-6">
               <div>
-                <Label htmlFor="email" className="text-primary">
+                <Label htmlFor="email" className="text-primary text-sm xs:text-base">
                   Correo Electrónico *
                 </Label>
                 <Input
@@ -145,19 +145,19 @@ const Login = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   onBlur={handleBlur}
-                  className={`mt-1 ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-secondary/30 focus:border-action'}`}
+                  className={`mt-1.5 sm:mt-2 h-10 xs:h-11 sm:h-12 text-sm xs:text-base ${errors.email ? 'border-red-500 focus:border-red-500' : 'border-secondary/30 focus:border-action'}`}
                   placeholder="tu@email.com"
                   aria-describedby={errors.email ? "email-error" : undefined}
                 />
                 {errors.email && (
-                  <p id="email-error" className="text-red-500 text-sm mt-1" role="alert">
+                  <p id="email-error" className="text-red-500 text-xs xs:text-sm mt-1" role="alert">
                     {errors.email}
                   </p>
                 )}
               </div>
 
               <div>
-                <Label htmlFor="password" className="text-primary">
+                <Label htmlFor="password" className="text-primary text-sm xs:text-base">
                   Contraseña *
                 </Label>
                 <div className="relative">
@@ -169,7 +169,7 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleInputChange}
                     onBlur={handleBlur}
-                    className={`mt-1 pr-10 ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-secondary/30 focus:border-action'}`}
+                    className={`mt-1.5 sm:mt-2 pr-10 h-10 xs:h-11 sm:h-12 text-sm xs:text-base ${errors.password ? 'border-red-500 focus:border-red-500' : 'border-secondary/30 focus:border-action'}`}
                     placeholder="Tu contraseña"
                     aria-describedby={errors.password ? "password-error" : undefined}
                   />
@@ -179,11 +179,11 @@ const Login = () => {
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary hover:text-primary"
                     aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? <EyeOff className="h-3 w-3 xs:h-4 xs:w-4" /> : <Eye className="h-3 w-3 xs:h-4 xs:w-4" />}
                   </button>
                 </div>
                 {errors.password && (
-                  <p id="password-error" className="text-red-500 text-sm mt-1" role="alert">
+                  <p id="password-error" className="text-red-500 text-xs xs:text-sm mt-1" role="alert">
                     {errors.password}
                   </p>
                 )}
@@ -192,7 +192,7 @@ const Login = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-action hover:bg-action/90 text-white py-2.5 xs:py-3 text-sm xs:text-base lg:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
@@ -201,21 +201,21 @@ const Login = () => {
                   </div>
                 ) : (
                   <div className="flex items-center justify-center space-x-2">
-                    <LogIn className="h-5 w-5" />
+                    <LogIn className="h-4 w-4 xs:h-5 xs:w-5" />
                     <span>Iniciar Sesión</span>
                   </div>
                 )}
               </Button>
             </form>
 
-            <div className="mt-6 text-center space-y-4">
-              <p className="text-secondary">
+            <div className="mt-4 xs:mt-6 text-center space-y-3 xs:space-y-4">
+              <p className="text-secondary text-sm xs:text-base">
                 ¿No tienes una cuenta?{" "}
                 <Link to="/register" className="text-action hover:underline font-semibold">
                   Regístrate aquí
                 </Link>
               </p>
-              <Link to="/contact" className="text-secondary hover:text-action text-sm inline-block">
+              <Link to="/contact" className="text-secondary hover:text-action text-xs xs:text-sm inline-block">
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>

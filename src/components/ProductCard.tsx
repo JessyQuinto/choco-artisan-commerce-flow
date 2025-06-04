@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -52,17 +51,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-48 sm:h-56 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+            className="w-full h-44 xs:h-48 sm:h-56 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
           />
         </Link>
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-semibold text-action">
+        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 text-xs font-semibold text-action shadow-sm">
           {product.origin}
         </div>
         <Button
           variant="ghost"
           size="sm"
           onClick={handleWishlistToggle}
-          className={`absolute top-3 left-3 p-2 rounded-full backdrop-blur-sm transition-all ${
+          className={`absolute top-2 left-2 p-2 rounded-full backdrop-blur-sm transition-all shadow-sm ${
             inWishlist 
               ? 'bg-action text-white hover:bg-action/90' 
               : 'bg-white/90 text-secondary hover:bg-white hover:text-action'
@@ -73,14 +72,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
 
-      <div className="p-4 md:p-6 space-y-3 md:space-y-4">
+      <div className="p-3 xs:p-4 md:p-6 space-y-3 md:space-y-4">
         <div>
           <Link to={`/product-detail?slug=${product.slug}`}>
-            <h3 className="font-bold text-base md:text-lg text-primary group-hover:text-action transition-colors line-clamp-2">
+            <h3 className="font-bold text-sm xs:text-base md:text-lg text-primary group-hover:text-action transition-colors line-clamp-2 leading-tight">
               {product.name}
             </h3>
           </Link>
-          <p className="text-sm text-secondary line-clamp-2 mt-1">
+          <p className="text-xs xs:text-sm text-secondary line-clamp-2 mt-1 leading-relaxed">
             {product.description}
           </p>
           <p className="text-xs text-action font-medium mt-2">
@@ -88,17 +87,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-          <div className="text-xl md:text-2xl font-bold text-action">
+        <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between gap-2 xs:gap-3">
+          <div className="text-lg xs:text-xl md:text-2xl font-bold text-action">
             ${product.price.toLocaleString()}
           </div>
           <Button 
             size="sm" 
             onClick={handleAddToCart}
-            className="bg-action hover:bg-action/90 text-white flex items-center space-x-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-full sm:w-auto justify-center"
+            className="bg-action hover:bg-action/90 text-white flex items-center space-x-2 rounded-lg transition-all duration-300 transform hover:scale-105 w-full xs:w-auto justify-center shadow-md hover:shadow-lg text-xs xs:text-sm"
           >
-            <ShoppingCart className="h-4 w-4" />
-            <span className="text-sm">Añadir</span>
+            <ShoppingCart className="h-3 w-3 xs:h-4 xs:w-4" />
+            <span>Añadir</span>
           </Button>
         </div>
       </div>

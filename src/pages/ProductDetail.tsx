@@ -63,11 +63,11 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
       
-      <main className="container mx-auto px-4 py-8">
-        <Breadcrumb className="mb-8">
+      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+        <Breadcrumb className="mb-4 sm:mb-6 lg:mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
@@ -78,14 +78,14 @@ const ProductDetail = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{product.name}</BreadcrumbPage>
+              <BreadcrumbPage className="text-xs xs:text-sm truncate">{product.name}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-10 lg:mb-12">
           {/* Product Images */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <div className="aspect-square rounded-xl overflow-hidden bg-gray-100">
               <img
                 src={product.images[selectedImage]}
@@ -93,13 +93,13 @@ const ProductDetail = () => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 lg:gap-4">
               {product.images.map((image, index) => (
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`aspect-square rounded-lg overflow-hidden border-2 transition-colors ${
-                    selectedImage === index ? 'border-primary-action' : 'border-transparent'
+                    selectedImage === index ? 'border-action' : 'border-transparent'
                   }`}
                 >
                   <img
@@ -113,14 +113,14 @@ const ProductDetail = () => {
           </div>
 
           {/* Product Info */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-5 lg:space-y-6">
             <div>
               <div className="flex items-center space-x-2 mb-2">
                 <div className="flex items-center space-x-1">
                   {[...Array(5)].map((_, i) => (
                     <Star
                       key={i}
-                      className={`h-4 w-4 ${
+                      className={`h-3 w-3 xs:h-4 xs:w-4 ${
                         i < Math.floor(product.rating) 
                           ? 'fill-yellow-400 text-yellow-400' 
                           : 'text-gray-300'
@@ -128,59 +128,59 @@ const ProductDetail = () => {
                     />
                   ))}
                 </div>
-                <span className="text-sm text-primary-secondary">
+                <span className="text-xs xs:text-sm text-secondary">
                   {product.rating} ({product.reviews} reseñas)
                 </span>
               </div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-primary-text mb-2">
+              <h1 className="text-xl xs:text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mb-2 leading-tight">
                 {product.name}
               </h1>
-              <p className="text-primary-secondary">
+              <p className="text-secondary text-sm xs:text-base">
                 Por <span className="font-medium">{product.artisan}</span> • {product.origin}
               </p>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <span className="text-2xl md:text-3xl font-bold text-primary-action">
+            <div className="flex flex-col xs:flex-row xs:items-center space-y-2 xs:space-y-0 xs:space-x-4">
+              <span className="text-xl xs:text-2xl sm:text-3xl font-bold text-action">
                 ${product.price.toLocaleString()}
               </span>
               {product.originalPrice && (
-                <>
-                  <span className="text-lg text-primary-secondary line-through">
+                <div className="flex items-center space-x-2">
+                  <span className="text-base xs:text-lg text-secondary line-through">
                     ${product.originalPrice.toLocaleString()}
                   </span>
-                  <Badge className="bg-green-100 text-green-800">
+                  <Badge className="bg-green-100 text-green-800 text-xs">
                     -{Math.round((1 - product.price / product.originalPrice) * 100)}%
                   </Badge>
-                </>
+                </div>
               )}
             </div>
 
-            <p className="text-primary-secondary text-lg leading-relaxed">
+            <p className="text-secondary text-sm xs:text-base sm:text-lg leading-relaxed">
               {product.description}
             </p>
 
             {/* Product Details */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-6 bg-primary-background rounded-xl">
+            <div className="grid grid-cols-1 gap-4 p-4 sm:p-5 lg:p-6 bg-background border border-secondary/20 rounded-xl">
               <div>
-                <h4 className="font-semibold text-primary-text mb-2">Detalles del Producto</h4>
-                <ul className="space-y-1 text-sm text-primary-secondary">
+                <h4 className="font-semibold text-primary mb-2 text-sm xs:text-base">Detalles del Producto</h4>
+                <ul className="space-y-1 text-xs xs:text-sm text-secondary">
                   <li><strong>Categoría:</strong> {product.category}</li>
                   <li><strong>Dimensiones:</strong> {product.dimensions}</li>
                   <li><strong>Materiales:</strong> {product.materials.join(', ')}</li>
                 </ul>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
-                  <Truck className="h-4 w-4" />
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-center space-x-2 text-xs xs:text-sm text-secondary">
+                  <Truck className="h-3 w-3 xs:h-4 xs:w-4 flex-shrink-0" />
                   <span>Envío gratis a toda Colombia</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
-                  <Shield className="h-4 w-4" />
+                <div className="flex items-center space-x-2 text-xs xs:text-sm text-secondary">
+                  <Shield className="h-3 w-3 xs:h-4 xs:w-4 flex-shrink-0" />
                   <span>Garantía de autenticidad</span>
                 </div>
-                <div className="flex items-center space-x-2 text-sm text-primary-secondary">
-                  <RotateCcw className="h-4 w-4" />
+                <div className="flex items-center space-x-2 text-xs xs:text-sm text-secondary">
+                  <RotateCcw className="h-3 w-3 xs:h-4 xs:w-4 flex-shrink-0" />
                   <span>Devoluciones en 30 días</span>
                 </div>
               </div>
@@ -188,19 +188,19 @@ const ProductDetail = () => {
 
             {/* Quantity and Actions */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <label className="font-medium text-primary-text">Cantidad:</label>
-                <div className="flex items-center border border-primary-secondary/30 rounded-lg">
+              <div className="flex flex-col xs:flex-row xs:items-center space-y-2 xs:space-y-0 xs:space-x-4">
+                <label className="font-medium text-primary text-sm xs:text-base">Cantidad:</label>
+                <div className="flex items-center border border-secondary/30 rounded-lg w-fit">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 text-primary-secondary hover:text-primary-action"
+                    className="px-2 xs:px-3 py-2 text-secondary hover:text-action transition-colors"
                   >
                     −
                   </button>
-                  <span className="px-4 py-2 font-medium">{quantity}</span>
+                  <span className="px-3 xs:px-4 py-2 font-medium text-sm xs:text-base min-w-[3rem] text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-2 text-primary-secondary hover:text-primary-action"
+                    className="px-2 xs:px-3 py-2 text-secondary hover:text-action transition-colors"
                   >
                     +
                   </button>
@@ -210,23 +210,23 @@ const ProductDetail = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-primary-action hover:bg-primary-action/90 text-white border-0 shadow-md hover:shadow-lg transition-all"
+                  className="flex-1 bg-action hover:bg-action/90 text-white border-0 shadow-md hover:shadow-lg transition-all text-sm xs:text-base py-2.5 xs:py-3"
                   size="lg"
                 >
-                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  <ShoppingCart className="h-4 w-4 xs:h-5 xs:w-5 mr-2" />
                   Agregar al Carrito
                 </Button>
                 <Button
                   onClick={handleWishlistToggle}
                   variant="outline"
                   size="lg"
-                  className={`border-primary-action ${
+                  className={`border-action min-w-[3rem] xs:min-w-[4rem] ${
                     inWishlist 
-                      ? 'bg-primary-action text-white' 
-                      : 'text-primary-action hover:bg-primary-action hover:text-white'
-                  } border-2 shadow-sm hover:shadow-md transition-all`}
+                      ? 'bg-action text-white' 
+                      : 'text-action hover:bg-action hover:text-white'
+                  } border-2 shadow-sm hover:shadow-md transition-all py-2.5 xs:py-3`}
                 >
-                  <Heart className={`h-5 w-5 ${inWishlist ? 'fill-current' : ''}`} />
+                  <Heart className={`h-4 w-4 xs:h-5 xs:w-5 ${inWishlist ? 'fill-current' : ''}`} />
                 </Button>
               </div>
             </div>
@@ -234,9 +234,9 @@ const ProductDetail = () => {
         </div>
 
         {/* Product Description */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-bold text-primary-text mb-6">Descripción Detallada</h3>
-          <p className="text-primary-secondary text-lg leading-relaxed">
+        <div className="mb-8 sm:mb-10 lg:mb-12">
+          <h3 className="text-lg xs:text-xl sm:text-2xl font-bold text-primary mb-4 sm:mb-6">Descripción Detallada</h3>
+          <p className="text-secondary text-sm xs:text-base sm:text-lg leading-relaxed">
             {product.longDescription}
           </p>
         </div>
