@@ -1,128 +1,84 @@
 
 import { Facebook, Instagram, Twitter } from "lucide-react";
-import { memo, useMemo } from "react";
-import { Link } from "react-router-dom";
-import Logo from "./Logo";
 
-const Footer = memo(() => {
-  // Memoize footer links to prevent unnecessary re-renders
-  const footerLinks = useMemo(() => ({
-    quickLinks: [
-      { to: "/", label: "Inicio" },
-      { to: "/shop", label: "Tienda" },
-      { to: "/stories", label: "Historias Culturales" },
-      { to: "/about", label: "Sobre Nosotros" },
-      { to: "/contact", label: "Contacto" }
-    ],
-    categories: [
-      { to: "/shop?category=ceramica", label: "Cerámica" },
-      { to: "/shop?category=textiles", label: "Textiles" },
-      { to: "/shop?category=madera", label: "Madera" },
-      { to: "/shop?category=joyeria", label: "Joyería" },
-      { to: "/shop?category=gastronomia", label: "Gastronomía" }
-    ],
-    support: [
-      { to: "/help", label: "Ayuda" },
-      { to: "/shipping", label: "Envíos" },
-      { to: "/returns", label: "Devoluciones" },
-      { to: "/terms", label: "Términos y Condiciones" },
-      { to: "/privacy", label: "Política de Privacidad" }
-    ]
-  }), []);
-
-  const socialLinks = useMemo(() => [
-    { href: "https://facebook.com", icon: Facebook, label: "Facebook" },
-    { href: "https://instagram.com", icon: Instagram, label: "Instagram" },
-    { href: "https://twitter.com", icon: Twitter, label: "Twitter" }
-  ], []);
-
+const Footer = () => {
   return (
-    <footer className="bg-amber-900 text-white relative z-10 w-full">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 lg:gap-10">
+    <footer className="bg-choco-800 text-white">
+      <div className="container mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
-          <div className="space-y-3 sm:space-y-4 xs:col-span-2 md:col-span-1">
-            <Logo size="md" variant="white" showText={true} />
-            <p className="text-gray-300 text-xs xs:text-sm sm:text-base leading-relaxed max-w-sm">
+          <div className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-selva-500 to-oro-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-lg">C</span>
+              </div>
+              <div>
+                <h3 className="text-xl font-bold">Chocó Artesanal</h3>
+                <p className="text-sm text-choco-300">Tesoros del Pacífico</p>
+              </div>
+            </div>
+            <p className="text-choco-300 text-sm leading-relaxed">
               Conectando el talento artesanal afrocolombiano con el mundo, 
               preservando tradiciones y creando oportunidades justas.
             </p>
           </div>
 
           {/* Enlaces Rápidos */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Enlaces Rápidos</h4>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              {footerLinks.quickLinks.map((link) => (
-                <li key={link.to}>
-                  <Link 
-                    to={link.to} 
-                    className="text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          <div>
+            <h4 className="font-bold mb-4 text-oro-400">Enlaces Rápidos</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Inicio</a></li>
+              <li><a href="#tienda" className="text-choco-300 hover:text-white transition-colors">Tienda</a></li>
+              <li><a href="#historias" className="text-choco-300 hover:text-white transition-colors">Historias Culturales</a></li>
+              <li><a href="#nosotros" className="text-choco-300 hover:text-white transition-colors">Sobre Nosotros</a></li>
+              <li><a href="#contacto" className="text-choco-300 hover:text-white transition-colors">Contacto</a></li>
             </ul>
           </div>
 
           {/* Categorías */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Categorías</h4>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              {footerLinks.categories.map((link) => (
-                <li key={link.to}>
-                  <Link 
-                    to={link.to} 
-                    className="text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          <div>
+            <h4 className="font-bold mb-4 text-oro-400">Categorías</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Cestería</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Textiles</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Cerámica</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Joyería</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Instrumentos</a></li>
             </ul>
           </div>
 
           {/* Soporte */}
-          <div className="space-y-3 sm:space-y-4">
-            <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Soporte</h4>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              {footerLinks.support.map((link) => (
-                <li key={link.to}>
-                  <Link 
-                    to={link.to} 
-                    className="text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+          <div>
+            <h4 className="font-bold mb-4 text-oro-400">Soporte</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Centro de Ayuda</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Política de Envíos</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Devoluciones</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Términos de Servicio</a></li>
+              <li><a href="#" className="text-choco-300 hover:text-white transition-colors">Política de Privacidad</a></li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-8 sm:mt-12 lg:mt-16 pt-6 sm:pt-8 border-t border-gray-700">
-          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 text-center sm:text-left">
-            <p className="text-gray-300 text-xs xs:text-sm order-2 sm:order-1">
+        <div className="mt-12 pt-8 border-t border-choco-700">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <p className="text-choco-300 text-sm">
               © 2024 Chocó Artesanal. Todos los derechos reservados.
             </p>
             
-            <div className="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4 order-1 sm:order-2">
-              <span className="text-gray-300 text-xs xs:text-sm">Síguenos:</span>
-              <div className="flex space-x-3 sm:space-x-4">
-                {socialLinks.map(({ href, icon: Icon, label }) => (
-                  <a 
-                    key={href}
-                    href={href} 
-                    className="text-gray-300 hover:text-white transition-colors p-1"
-                    aria-label={label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Icon className="h-4 w-4 xs:h-5 xs:w-5" />
-                  </a>
-                ))}
+            <div className="flex items-center space-x-4">
+              <span className="text-choco-300 text-sm">Síguenos:</span>
+              <div className="flex space-x-3">
+                <a href="#" className="text-choco-300 hover:text-white transition-colors">
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-choco-300 hover:text-white transition-colors">
+                  <Instagram className="h-5 w-5" />
+                </a>
+                <a href="#" className="text-choco-300 hover:text-white transition-colors">
+                  <Twitter className="h-5 w-5" />
+                </a>
               </div>
             </div>
           </div>
@@ -130,6 +86,6 @@ const Footer = memo(() => {
       </div>
     </footer>
   );
-});
+};
 
 export default Footer;

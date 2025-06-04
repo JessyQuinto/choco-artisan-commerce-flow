@@ -1,7 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { immer } from 'zustand/middleware/immer';
-import { subscribeWithSelector } from 'zustand/middleware';
 
 interface Product {
   id: number;
@@ -117,241 +115,234 @@ const initialFilters: SearchFilters = {
 };
 
 export const useStore = create<Store>()(
-  subscribeWithSelector(
-    persist(
-      immer((set, get) => ({
-        // Initial state
-        cartItems: [],
-        cartCount: 0,
-        cartTotal: 0,
-        auth: {
-          user: null,
-          isLoggedIn: false,
-          token: null,
-          isLoading: false
-        },
-        wishlist: [],
-        searchQuery: '',
-        filters: initialFilters,
-        isLoading: false,
-        error: null,
+  persist(
+    (set, get) => ({
+      // Initial state
+      cartItems: [],
+      cartCount: 0,
+      cartTotal: 0,
+      auth: {
+        user: null,
+        isLoggedIn: false,
+        token: null,
+        isLoading: false
+      },
+      wishlist: [],
+      searchQuery: '',
+      filters: initialFilters,
+      isLoading: false,
+      error: null,
+      
+      // Cart actions
+      addToCart: (product, quantity = 1) => {
+        const { cartItems } = get();
+        const existingItem = cartItems.find(item => item.id === product.id);
         
-        // Cart actions
-        addToCart: (product, quantity = 1) => set((state) => {
-          const existingItem = state.cartItems.find(item => item.id === product.id);
-          
-          if (existingItem) {
-            existingItem.quantity += quantity;
-            existingItem.total = existingItem.quantity * existingItem.price;
-          } else {
-            const newItem: CartItem = {
-              ...product,
-              quantity,
-              total: product.price * quantity
-            };
-            state.cartItems.push(newItem);
-          }
-          
-          state.cartCount = state.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-          state.cartTotal = state.cartItems.reduce((sum, item) => sum + item.total, 0);
-        }),
+        let newCartItems: CartItem[];
         
-        removeFromCart: (productId) => set((state) => {
-          state.cartItems = state.cartItems.filter(item => item.id !== productId);
-          state.cartCount = state.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-          state.cartTotal = state.cartItems.reduce((sum, item) => sum + item.total, 0);
-        }),
+        if (existingItem) {
+          newCartItems = cartItems.map(item =>
+            item.id === product.id
+              ? { 
+                  ...item, 
+                  quantity: item.quantity + quantity, 
+                  total: (item.quantity + quantity) * item.price 
+                }
+              : item
+          );
+        } else {
+          const newItem: CartItem = {
+            ...product,
+            quantity,
+            total: product.price * quantity
+          };
+          newCartItems = [...cartItems, newItem];
+        }
         
-        updateCartQuantity: (productId, quantity) => set((state) => {
-          if (quantity < 1) return;
-          
-          const item = state.cartItems.find(item => item.id === productId);
-          if (item) {
-            item.quantity = quantity;
-            item.total = quantity * item.price;
-            state.cartCount = state.cartItems.reduce((sum, item) => sum + item.quantity, 0);
-            state.cartTotal = state.cartItems.reduce((sum, item) => sum + item.total, 0);
-          }
-        }),
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
-        clearCart: () => set((state) => {
-          state.cartItems = [];
-          state.cartCount = 0;
-          state.cartTotal = 0;
-        }),
+        set({
+          cartItems: newCartItems,
+          cartCount: newCount,
+          cartTotal: newTotal
+        });
+      },
+      
+      removeFromCart: (productId) => {
+        const { cartItems } = get();
+        const newCartItems = cartItems.filter(item => item.id !== productId);
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
-        getCartTotal: () => {
-          const { cartItems } = get();
-          return cartItems.reduce((sum, item) => sum + item.total, 0);
-        },
+        set({
+          cartItems: newCartItems,
+          cartCount: newCount,
+          cartTotal: newTotal
+        });
+      },
+      
+      updateCartQuantity: (productId, quantity) => {
+        if (quantity < 1) return;
         
-        // Auth actions
-        login: (userData, token) => set((state) => {
-          state.auth = {
+        const { cartItems } = get();
+        const newCartItems = cartItems.map(item =>
+          item.id === productId
+            ? { ...item, quantity, total: quantity * item.price }
+            : item
+        );
+        
+        const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
+        const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
+        
+        set({
+          cartItems: newCartItems,
+          cartCount: newCount,
+          cartTotal: newTotal
+        });
+      },
+      
+      clearCart: () => {
+        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
+      },
+      
+      getCartTotal: () => {
+        const { cartItems } = get();
+        return cartItems.reduce((sum, item) => sum + item.total, 0);
+      },
+      
+      // Auth actions
+      login: (userData, token) => {
+        set({
+          auth: {
             user: userData,
             isLoggedIn: true,
             token: token || null,
             isLoading: false
-          };
-        }),
-        
-        logout: () => set((state) => {
-          state.auth = {
-            user: null,
-            isLoggedIn: false,
-            token: null,
-            isLoading: false
-          };
-        }),
-        
-        updateUser: (userData) => set((state) => {
-          if (state.auth.user) {
-            state.auth.user = { ...state.auth.user, ...userData };
           }
-        }),
-        
-        setAuthLoading: (loading) => set((state) => {
-          state.auth.isLoading = loading;
-        }),
-        
-        // Wishlist actions
-        addToWishlist: (product) => set((state) => {
-          if (!state.wishlist.find(item => item.id === product.id)) {
-            state.wishlist.push(product);
-          }
-        }),
-        
-        removeFromWishlist: (productId) => set((state) => {
-          state.wishlist = state.wishlist.filter(item => item.id !== productId);
-        }),
-        
-        isInWishlist: (productId) => {
-          const { wishlist } = get();
-          return wishlist.some(item => item.id === productId);
-        },
-        
-        clearWishlist: () => set((state) => {
-          state.wishlist = [];
-        }),
-        
-        // UI actions
-        setSearchQuery: (query) => set((state) => {
-          state.searchQuery = query;
-        }),
-        
-        updateFilters: (newFilters) => set((state) => {
-          state.filters = { ...state.filters, ...newFilters };
-        }),
-        
-        resetFilters: () => set((state) => {
-          state.filters = initialFilters;
-          state.searchQuery = '';
-        }),
-        
-        setLoading: (loading) => set((state) => {
-          state.isLoading = loading;
-        }),
-        
-        setError: (error) => set((state) => {
-          state.error = error;
-        }),
-        
-        // Order actions
-        completeOrder: () => set((state) => {
-          state.cartItems = [];
-          state.cartCount = 0;
-          state.cartTotal = 0;
-        }),
-        
-        // Utility actions
-        clearUserData: () => set((state) => {
-          state.auth = {
-            user: null,
-            isLoggedIn: false,
-            token: null,
-            isLoading: false
-          };
-          state.cartItems = [];
-          state.cartCount = 0;
-          state.cartTotal = 0;
-          state.wishlist = [];
-          state.searchQuery = '';
-          state.filters = initialFilters;
-          state.error = null;
-        }),
-        
-        getStorageStats: () => {
-          const { cartItems, wishlist } = get();
-          return {
-            cartItems: cartItems.length,
-            wishlistItems: wishlist.length
-          };
-        }
-      })),
-      {
-        name: 'choco-artesanal-store',
-        partialize: (state) => ({
-          cartItems: state.cartItems,
-          cartCount: state.cartCount,
-          cartTotal: state.cartTotal,
+        });
+      },
+      
+      logout: () => {
+        set({
           auth: {
-            user: state.auth.user,
-            isLoggedIn: state.auth.isLoggedIn,
-            token: state.auth.token,
-            isLoading: false // Don't persist loading state
-          },
-          wishlist: state.wishlist,
-          filters: state.filters
-        })
+            user: null,
+            isLoggedIn: false,
+            token: null,
+            isLoading: false
+          }
+        });
+      },
+      
+      updateUser: (userData) => {
+        const { auth } = get();
+        if (auth.user) {
+          set({
+            auth: {
+              ...auth,
+              user: { ...auth.user, ...userData }
+            }
+          });
+        }
+      },
+      
+      setAuthLoading: (loading) => {
+        const { auth } = get();
+        set({
+          auth: { ...auth, isLoading: loading }
+        });
+      },
+      
+      // Wishlist actions
+      addToWishlist: (product) => {
+        const { wishlist } = get();
+        if (!wishlist.find(item => item.id === product.id)) {
+          set({ wishlist: [...wishlist, product] });
+        }
+      },
+      
+      removeFromWishlist: (productId) => {
+        const { wishlist } = get();
+        set({ wishlist: wishlist.filter(item => item.id !== productId) });
+      },
+      
+      isInWishlist: (productId) => {
+        const { wishlist } = get();
+        return wishlist.some(item => item.id === productId);
+      },
+      
+      clearWishlist: () => {
+        set({ wishlist: [] });
+      },
+      
+      // UI actions
+      setSearchQuery: (query) => {
+        set({ searchQuery: query });
+      },
+      
+      updateFilters: (newFilters) => {
+        const { filters } = get();
+        set({ filters: { ...filters, ...newFilters } });
+      },
+      
+      resetFilters: () => {
+        set({ filters: initialFilters, searchQuery: '' });
+      },
+      
+      setLoading: (loading) => {
+        set({ isLoading: loading });
+      },
+      
+      setError: (error) => {
+        set({ error });
+      },
+      
+      // Order actions
+      completeOrder: () => {
+        // Clear the cart when order is completed
+        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
+      },
+      
+      // Utility actions
+      clearUserData: () => {
+        get().logout();
+        get().clearCart();
+        get().clearWishlist();
+        set({ 
+          searchQuery: '', 
+          filters: initialFilters,
+          error: null 
+        });
+      },
+      
+      getStorageStats: () => {
+        const { cartItems, wishlist } = get();
+        return {
+          cartItems: cartItems.length,
+          wishlistItems: wishlist.length
+        };
       }
-    )
+    }),
+    {
+      name: 'choco-artesanal-store',
+      partialize: (state) => ({
+        cartItems: state.cartItems,
+        cartCount: state.cartCount,
+        cartTotal: state.cartTotal,
+        auth: state.auth,
+        wishlist: state.wishlist,
+        filters: state.filters
+      })
+    }
   )
 );
 
-// Optimized selectors for better performance
+// Selectors for better performance
 export const useAuth = () => useStore(state => state.auth);
-export const useIsLoggedIn = () => useStore(state => state.auth.isLoggedIn);
-export const useUser = () => useStore(state => state.auth.user);
-
 export const useCart = () => useStore(state => ({ 
   items: state.cartItems, 
   count: state.cartCount, 
   total: state.cartTotal 
 }));
-export const useCartItems = () => useStore(state => state.cartItems);
-export const useCartCount = () => useStore(state => state.cartCount);
-export const useCartTotal = () => useStore(state => state.cartTotal);
-
 export const useWishlist = () => useStore(state => state.wishlist);
-export const useIsInWishlist = (productId: number) => useStore(state => 
-  state.wishlist.some(item => item.id === productId)
-);
-
 export const useFilters = () => useStore(state => state.filters);
-export const useSearchQuery = () => useStore(state => state.searchQuery);
-
-export const useUI = () => useStore(state => ({
-  isLoading: state.isLoading,
-  error: state.error
-}));
-
-// Action selectors
-export const useCartActions = () => useStore(state => ({
-  addToCart: state.addToCart,
-  removeFromCart: state.removeFromCart,
-  updateCartQuantity: state.updateCartQuantity,
-  clearCart: state.clearCart
-}));
-
-export const useAuthActions = () => useStore(state => ({
-  login: state.login,
-  logout: state.logout,
-  updateUser: state.updateUser,
-  setAuthLoading: state.setAuthLoading
-}));
-
-export const useWishlistActions = () => useStore(state => ({
-  addToWishlist: state.addToWishlist,
-  removeFromWishlist: state.removeFromWishlist,
-  clearWishlist: state.clearWishlist
-}));

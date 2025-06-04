@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -110,27 +111,6 @@
     color: #e55d19 !important;
   }
 
-  /* Colores de café adicionales */
-  .bg-brown-900 {
-    background-color: #7c2d12 !important;
-  }
-  
-  .bg-brown-800 {
-    background-color: #9a3412 !important;
-  }
-  
-  .bg-brown-700 {
-    background-color: #a16207 !important;
-  }
-  
-  .text-brown-100 {
-    color: #fef3c7 !important;
-  }
-  
-  .text-brown-200 {
-    color: #fde68a !important;
-  }
-
   /* Asegurar visibilidad de todos los elementos */
   h1, h2, h3, h4, h5, h6, p, span, a, button, input, textarea, label {
     color: inherit;
@@ -164,63 +144,21 @@
     z-index: 50;
   }
 
-  /* Footer siempre visible */
-  footer {
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: relative;
-    z-index: 10;
-  }
-
   /* Forms */
   form {
     opacity: 1 !important;
     visibility: visible !important;
   }
 
-  /* Mantener transiciones básicas */
+  /* Eliminar animaciones que puedan causar problemas */
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* Solo mantener transiciones básicas en hover */
   button:hover,
   a:hover {
-    transition: background-color 0.15s ease, color 0.15s ease;
-  }
-
-  /* Hero Section Mobile Optimizations */
-  @media (max-width: 640px) {
-    .hero-gradient-text {
-      background: linear-gradient(135deg, #e55d19 0%, #f59e0b 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
-    }
-    
-    .hero-text-shadow {
-      text-shadow: 
-        0 2px 4px rgba(0, 0, 0, 0.7),
-        0 4px 8px rgba(0, 0, 0, 0.4),
-        0 8px 16px rgba(0, 0, 0, 0.2);
-    }
-    
-    .hero-backdrop {
-      backdrop-filter: blur(4px);
-      background: rgba(0, 0, 0, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 0 0.5rem;
-      padding: 1rem;
-      border-radius: 0.75rem;
-    }
-  }
-
-  /* Smooth scroll behavior */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Touch optimization for mobile */
-  @media (hover: none) and (pointer: coarse) {
-    button, a {
-      touch-action: manipulation;
-      user-select: none;
-    }
+    transition: background-color 0.15s ease !important;
   }
 }

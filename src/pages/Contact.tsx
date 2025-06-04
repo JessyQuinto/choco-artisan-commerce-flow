@@ -63,11 +63,11 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
-        <Breadcrumb className="mb-6 sm:mb-8">
+      <main className="container mx-auto px-4 py-8">
+        <Breadcrumb className="mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
@@ -80,50 +80,50 @@ const Contact = () => {
         </Breadcrumb>
 
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-bold text-primary mb-6 sm:mb-8 lg:mb-12 text-center leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-8 text-center">
             Contáctanos
           </h1>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12">
+          <div className="grid lg:grid-cols-2 gap-12">
             {/* Información de contacto */}
-            <div className="order-2 lg:order-1">
-              <h2 className="text-xl xs:text-2xl sm:text-2xl font-bold text-primary mb-4 sm:mb-6">
+            <div>
+              <h2 className="text-2xl font-bold text-primary mb-6">
                 Información de Contacto
               </h2>
               
-              <div className="space-y-4 sm:space-y-6">
-                <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg bg-background/50">
-                  <MapPin className="h-5 w-5 xs:h-6 xs:w-6 text-action mt-1 flex-shrink-0" />
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <MapPin className="h-6 w-6 text-action mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-primary text-sm xs:text-base">Dirección</h3>
-                    <p className="text-secondary text-sm xs:text-base leading-relaxed">
+                    <h3 className="font-semibold text-primary">Dirección</h3>
+                    <p className="text-secondary">
                       Quibdó, Chocó<br />
                       Colombia
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg bg-background/50">
-                  <Phone className="h-5 w-5 xs:h-6 xs:w-6 text-action mt-1 flex-shrink-0" />
+                <div className="flex items-start space-x-4">
+                  <Phone className="h-6 w-6 text-action mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-primary text-sm xs:text-base">Teléfono</h3>
-                    <p className="text-secondary text-sm xs:text-base">+57 (4) 123-4567</p>
+                    <h3 className="font-semibold text-primary">Teléfono</h3>
+                    <p className="text-secondary">+57 (4) 123-4567</p>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg bg-background/50">
-                  <Mail className="h-5 w-5 xs:h-6 xs:w-6 text-action mt-1 flex-shrink-0" />
+                <div className="flex items-start space-x-4">
+                  <Mail className="h-6 w-6 text-action mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-primary text-sm xs:text-base">Email</h3>
-                    <p className="text-secondary text-sm xs:text-base">info@chocoartesanal.com</p>
+                    <h3 className="font-semibold text-primary">Email</h3>
+                    <p className="text-secondary">info@chocoartesanal.com</p>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-3 sm:space-x-4 p-3 sm:p-4 rounded-lg bg-background/50">
-                  <Clock className="h-5 w-5 xs:h-6 xs:w-6 text-action mt-1 flex-shrink-0" />
+                <div className="flex items-start space-x-4">
+                  <Clock className="h-6 w-6 text-action mt-1 flex-shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-primary text-sm xs:text-base">Horario de Atención</h3>
-                    <p className="text-secondary text-sm xs:text-base leading-relaxed">
+                    <h3 className="font-semibold text-primary">Horario de Atención</h3>
+                    <p className="text-secondary">
                       Lunes - Viernes: 8:00 AM - 6:00 PM<br />
                       Sábado: 9:00 AM - 4:00 PM<br />
                       Domingo: Cerrado
@@ -132,25 +132,25 @@ const Contact = () => {
                 </div>
               </div>
 
-              <div className="mt-6 sm:mt-8 hidden sm:block">
+              <div className="mt-8">
                 <img
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQ4XGsCBZ76gbzDLTBUKPL654varlCw0is3FwR5TP-2AgtxRDmuVaQBUgQYhGv5lkIHEZsWWoTzSz5B6CnSZG445gOdpFxA-mfBdpWwyXT2LK2_kjvbec21WiHOYY5MISY1EsF8KIoE8BYs4YizVUXxi_PcuMovWowjXjJOe-Aud0g0665YSEPgGeqresF6-ik1fkpMda7X3H2Fuy7Z-NCCwKrKppYK1w5ST3LJqrn1ab2J-3KsqfY1lFMG0Ew2BfvAIB8BVMn"
                   alt="Contacto Chocó Artesanal"
-                  className="w-full h-48 sm:h-64 object-cover rounded-lg shadow-lg"
+                  className="w-full h-64 object-cover rounded-lg shadow-lg"
                 />
               </div>
             </div>
 
             {/* Formulario de contacto */}
-            <div className="order-1 lg:order-2">
-              <div className="bg-background border border-secondary/20 rounded-xl p-4 sm:p-6 lg:p-8 shadow-lg">
-                <h2 className="text-xl xs:text-2xl sm:text-2xl font-bold text-primary mb-4 sm:mb-6">
+            <div>
+              <div className="bg-background border border-secondary/20 rounded-xl p-8 shadow-lg">
+                <h2 className="text-2xl font-bold text-primary mb-6">
                   Envíanos un Mensaje
                 </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <Label htmlFor="name" className="text-primary text-sm xs:text-base font-medium">
+                    <Label htmlFor="name" className="text-primary">
                       Nombre Completo *
                     </Label>
                     <Input
@@ -160,13 +160,13 @@ const Contact = () => {
                       required
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="mt-1.5 sm:mt-2 border-secondary/30 focus:border-action h-10 xs:h-11 sm:h-12 text-sm xs:text-base"
+                      className="mt-1 border-secondary/30 focus:border-action"
                       placeholder="Tu nombre completo"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="email" className="text-primary text-sm xs:text-base font-medium">
+                    <Label htmlFor="email" className="text-primary">
                       Correo Electrónico *
                     </Label>
                     <Input
@@ -176,13 +176,13 @@ const Contact = () => {
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="mt-1.5 sm:mt-2 border-secondary/30 focus:border-action h-10 xs:h-11 sm:h-12 text-sm xs:text-base"
+                      className="mt-1 border-secondary/30 focus:border-action"
                       placeholder="tu@email.com"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="subject" className="text-primary text-sm xs:text-base font-medium">
+                    <Label htmlFor="subject" className="text-primary">
                       Asunto *
                     </Label>
                     <Input
@@ -192,23 +192,23 @@ const Contact = () => {
                       required
                       value={formData.subject}
                       onChange={handleInputChange}
-                      className="mt-1.5 sm:mt-2 border-secondary/30 focus:border-action h-10 xs:h-11 sm:h-12 text-sm xs:text-base"
+                      className="mt-1 border-secondary/30 focus:border-action"
                       placeholder="Asunto de tu mensaje"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="message" className="text-primary text-sm xs:text-base font-medium">
+                    <Label htmlFor="message" className="text-primary">
                       Mensaje *
                     </Label>
                     <textarea
                       id="message"
                       name="message"
                       required
-                      rows={4}
+                      rows={5}
                       value={formData.message}
                       onChange={handleInputChange}
-                      className="mt-1.5 sm:mt-2 w-full px-3 sm:px-4 py-2 sm:py-3 border border-secondary/30 rounded-md focus:border-action focus:outline-none resize-vertical text-sm xs:text-base min-h-[100px]"
+                      className="mt-1 w-full px-3 py-2 border border-secondary/30 rounded-md focus:border-action focus:outline-none resize-vertical"
                       placeholder="Escribe tu mensaje aquí..."
                     />
                   </div>
@@ -216,7 +216,7 @@ const Contact = () => {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-action hover:bg-action/90 text-white py-2.5 xs:py-3 sm:py-4 text-sm xs:text-base sm:text-lg font-semibold disabled:opacity-50 transition-all"
+                    className="w-full bg-action hover:bg-action/90 text-white py-3 text-lg font-semibold disabled:opacity-50"
                   >
                     {loading ? "Enviando..." : "Enviar Mensaje"}
                   </Button>

@@ -109,11 +109,11 @@ const StoryDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-        <Breadcrumb className="mb-4 sm:mb-6 lg:mb-8">
+      <main className="container mx-auto px-4 py-8">
+        <Breadcrumb className="mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Inicio</BreadcrumbLink>
@@ -124,38 +124,38 @@ const StoryDetail = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-xs xs:text-sm truncate">{story.title}</BreadcrumbPage>
+              <BreadcrumbPage>{story.title}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
         <div className="max-w-4xl mx-auto">
-          <div className="mb-6 sm:mb-8">
-            <Button variant="ghost" asChild className="mb-3 sm:mb-4 text-secondary hover:text-action text-sm xs:text-base">
+          <div className="mb-8">
+            <Button variant="ghost" asChild className="mb-4 text-primary-secondary hover:text-primary-action">
               <Link to="/#historias" className="flex items-center space-x-2">
-                <ArrowLeft className="h-3 w-3 xs:h-4 xs:w-4" />
+                <ArrowLeft className="h-4 w-4" />
                 <span>Volver a Historias</span>
               </Link>
             </Button>
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 sm:mb-6 space-y-3 xs:space-y-4 md:space-y-0">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 space-y-4 md:space-y-0">
               <div>
-                <h1 className="text-xl xs:text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-3 sm:mb-4 leading-tight">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-text mb-4">
                   {story.title}
                 </h1>
-                <div className="flex flex-wrap items-center text-secondary space-x-2 xs:space-x-4 text-xs xs:text-sm">
+                <div className="flex flex-wrap items-center text-primary-secondary space-x-4 text-sm">
                   <span>Por {story.author}</span>
                   <span>•</span>
                   <span>{story.date}</span>
                   <span>•</span>
                   <div className="flex items-center space-x-1">
-                    <Clock className="h-3 w-3 xs:h-4 xs:w-4" />
+                    <Clock className="h-4 w-4" />
                     <span>{story.readTime}</span>
                   </div>
                 </div>
               </div>
-              <Button variant="outline" onClick={handleShare} className="border-action text-action hover:bg-action hover:text-white text-sm xs:text-base w-full md:w-auto">
-                <Share2 className="h-3 w-3 xs:h-4 xs:w-4 mr-2" />
+              <Button variant="outline" onClick={handleShare} className="border-primary-action text-primary-action hover:bg-primary-action hover:text-white">
+                <Share2 className="h-4 w-4 mr-2" />
                 Compartir
               </Button>
             </div>
@@ -163,19 +163,19 @@ const StoryDetail = () => {
             <img
               src={story.image}
               alt={story.title}
-              className="w-full h-48 xs:h-56 sm:h-64 md:h-80 lg:h-96 object-cover rounded-xl shadow-lg mb-6 sm:mb-8"
+              className="w-full h-64 md:h-96 object-cover rounded-xl shadow-lg mb-8"
             />
           </div>
 
-          <article className="prose prose-sm xs:prose-base md:prose-lg max-w-none">
+          <article className="prose prose-lg max-w-none">
             <div 
-              className="text-secondary leading-relaxed space-y-4 xs:space-y-6 text-sm xs:text-base"
+              className="text-primary-secondary leading-relaxed space-y-6"
               dangerouslySetInnerHTML={{ __html: story.content }}
             />
           </article>
 
-          <div className="mt-8 sm:mt-10 lg:mt-12 text-center">
-            <Button asChild className="bg-action hover:bg-action/90 text-white w-full xs:w-auto py-2.5 xs:py-3 text-sm xs:text-base">
+          <div className="mt-12 text-center">
+            <Button asChild className="bg-primary-action hover:bg-primary-action/90 text-white">
               <Link to="/shop">Explorar Productos Artesanales</Link>
             </Button>
           </div>
