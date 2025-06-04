@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { X, ShoppingCart, Gift, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -12,35 +12,53 @@ const CartAbandonmentNotice = () => {
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
   const { items } = useCart();
 
-  useEffect(() => {
-    // Show notice if cart has items and user hasn't been active for 5 minutes
-    const checkAbandonedCart = () => {
-      if (items.length > 0) {
-        const lastActivity = localStorage.getItem('lastCartActivity');
-        const now = Date.now();
-        
-        if (!lastActivity || now - parseInt(lastActivity) > 5 * 60 * 1000) {
-          setShowNotice(true);
-        }
+  // Memoize the check function to prevent recreation on every render
+  const checkAbandonedCart = useCallback(() => {
+    if (items.length > 0) {
+      const lastActivity = localStorage.getItem('lastCartActivity');
+      const dismissedTime = localStorage.getItem('cartNoticeDismissed');
+      const now = Date.now();
+      
+      // Don't show if dismissed recently (within 1 hour)
+      if (dismissedTime && now - parseInt(dismissedTime) < 60 * 60 * 1000) {
+        return;
       }
-    };
-
-    const timer = setTimeout(checkAbandonedCart, 5 * 60 * 1000); // Check after 5 minutes
-    return () => clearTimeout(timer);
+      
+      if (!lastActivity || now - parseInt(lastActivity) > 5 * 60 * 1000) {
+        setShowNotice(true);
+        setTimeLeft(15 * 60); // Reset timer when showing
+      }
+    } else {
+      setShowNotice(false);
+    }
   }, [items.length]);
 
   useEffect(() => {
+    // Only set up the timer if we haven't already shown the notice
+    if (items.length > 0 && !showNotice) {
+      const timer = setTimeout(checkAbandonedCart, 5 * 60 * 1000); // Check after 5 minutes
+      return () => clearTimeout(timer);
+    }
+  }, [items.length, showNotice, checkAbandonedCart]);
+
+  useEffect(() => {
+    let countdown: NodeJS.Timeout;
+    
     if (showNotice && timeLeft > 0) {
-      const countdown = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
+      countdown = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            setShowNotice(false);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
-      
-      return () => clearInterval(countdown);
     }
     
-    if (timeLeft === 0) {
-      setShowNotice(false);
-    }
+    return () => {
+      if (countdown) clearInterval(countdown);
+    };
   }, [showNotice, timeLeft]);
 
   const formatTime = (seconds: number) => {
