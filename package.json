@@ -8,7 +8,9 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "validate": "node quick-validate.js",
+    "test:performance": "npm run build && npm run validate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -40,10 +42,12 @@
     "@radix-ui/react-toggle-group": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.4",
     "@tanstack/react-query": "^5.56.2",
+    "@types/react-window": "^1.8.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "embla-carousel-react": "^8.6.0",
+    "immer": "^10.1.1",
     "lucide-react": "^0.462.0",
     "react": "^18.3.1",
     "react-day-picker": "^9.7.0",
@@ -51,6 +55,8 @@
     "react-hook-form": "^7.53.0",
     "react-resizable-panels": "^3.0.2",
     "react-router-dom": "^6.26.2",
+    "react-window": "^1.8.11",
+    "react-window-infinite-loader": "^1.0.10",
     "recharts": "^2.15.3",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",

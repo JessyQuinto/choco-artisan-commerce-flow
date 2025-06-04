@@ -1,29 +1,35 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import ProductCard from "@/components/ProductCard";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import VirtualizedProductGrid from "@/components/VirtualizedProductGrid";
+import { ProductGridSkeleton } from "@/components/Skeleton";
+import { useFilters, useSearchQuery } from "@/store/useStore";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Filter, Grid, List, SlidersHorizontal } from "lucide-react";
+import { Filter, Grid, List, SlidersHorizontal, Search } from "lucide-react";
+import { useMemo as useMemoCallback } from "react";
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchParams] = useSearchParams();
-  const [filters, setFilters] = useState({
+  const filters = useFilters();
+  const searchQuery = useSearchQuery();
+  const [localFilters, setLocalFilters] = useState({
     category: "all",
     priceRange: "all",
     artisan: "",
     sortBy: "name",
-    search: searchParams.get('search') || ""
   });
+  const [localSearch, setLocalSearch] = useState(searchParams.get('search') || searchQuery || "");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   const mockProducts = [
     {
@@ -100,56 +106,75 @@ const Shop = () => {
       setLoading(false);
     }, 500);
   }, []);
-
   const filteredProducts = useMemo(() => {
     let filtered = products.filter(product => {
-      const categoryMatch = filters.category === "all" || product.category === filters.category;
-      const searchMatch = product.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-                         product.artisan.toLowerCase().includes(filters.search.toLowerCase());
-      const artisanMatch = !filters.artisan || product.artisan.toLowerCase().includes(filters.artisan.toLowerCase());
+      const categoryMatch = localFilters.category === "all" || product.category === localFilters.category;
+      const searchMatch = product.name.toLowerCase().includes(localSearch.toLowerCase()) ||
+                         product.artisan.toLowerCase().includes(localSearch.toLowerCase());
+      const artisanMatch = !localFilters.artisan || product.artisan.toLowerCase().includes(localFilters.artisan.toLowerCase());
       
       let priceMatch = true;
-      if (filters.priceRange !== "all") {
-        if (filters.priceRange === "low") priceMatch = product.price < 100000;
-        else if (filters.priceRange === "medium") priceMatch = product.price >= 100000 && product.price <= 200000;
-        else if (filters.priceRange === "high") priceMatch = product.price > 200000;
+      if (localFilters.priceRange !== "all") {
+        if (localFilters.priceRange === "low") priceMatch = product.price < 100000;
+        else if (localFilters.priceRange === "medium") priceMatch = product.price >= 100000 && product.price <= 200000;
+        else if (localFilters.priceRange === "high") priceMatch = product.price > 200000;
       }
       
       return categoryMatch && searchMatch && artisanMatch && priceMatch;
     });
 
-    // Ordenar
-    if (filters.sortBy === "price-low") {
-      filtered = filtered.sort((a, b) => a.price - b.price);
-    } else if (filters.sortBy === "price-high") {
-      filtered = filtered.sort((a, b) => b.price - a.price);
-    } else if (filters.sortBy === "name") {
-      filtered = filtered.sort((a, b) => a.name.localeCompare(b.name));
-    }
+    // Ordenar con optimización
+    const sortProducts = (products, sortBy) => {
+      switch (sortBy) {
+        case "price-low":
+          return [...products].sort((a, b) => a.price - b.price);
+        case "price-high":
+          return [...products].sort((a, b) => b.price - a.price);
+        case "name":
+          return [...products].sort((a, b) => a.name.localeCompare(b.name));
+        default:
+          return products;
+      }
+    };
 
-    return filtered;
-  }, [products, filters]);
+    return sortProducts(filtered, localFilters.sortBy);
+  }, [products, localFilters, localSearch]);
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  };
+  const handleFilterChange = useCallback((key: string, value: string) => {
+    setLocalFilters(prev => ({ ...prev, [key]: value }));
+  }, []);
 
-  const clearFilters = () => {
-    setFilters({
+  const handleSearchChange = useCallback((value: string) => {
+    setLocalSearch(value);
+    setIsSearching(true);
+    
+    // Debounce search
+    const timeoutId = setTimeout(() => {
+      setIsSearching(false);
+    }, 300);
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const clearFilters = useCallback(() => {
+    setLocalFilters({
       category: "all",
       priceRange: "all",
       artisan: "",
       sortBy: "name",
-      search: ""
     });
-  };
-
+    setLocalSearch("");
+  }, []);
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <div className="flex justify-center items-center py-32 flex-1">
-          <LoadingSpinner size="lg" text="Cargando productos..." />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 flex-1">
+          <div className="mb-6">
+            <div className="bg-gray-200 h-6 w-48 rounded animate-pulse mb-4" />
+            <div className="bg-gray-200 h-8 w-64 rounded animate-pulse" />
+          </div>
+          <ProductGridSkeleton count={12} />
         </div>
         <Footer />
       </div>
@@ -212,8 +237,7 @@ const Shop = () => {
           <div className="flex flex-col xs:flex-row items-start xs:items-center space-y-2 xs:space-y-0 xs:space-x-3 sm:space-x-4 w-full sm:w-auto">
             <Label htmlFor="sort" className="text-primary font-medium whitespace-nowrap text-sm xs:text-base">
               Ordenar por:
-            </Label>
-            <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange("sortBy", value)}>
+            </Label>            <Select value={localFilters.sortBy} onValueChange={(value) => handleFilterChange("sortBy", value)}>
               <SelectTrigger className="w-full xs:w-48 h-9 xs:h-10 text-sm xs:text-base">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
@@ -240,28 +264,34 @@ const Shop = () => {
                 </Button>
               </div>
 
-              <div className="space-y-4 sm:space-y-6">
-                {/* Búsqueda */}
+              <div className="space-y-4 sm:space-y-6">                {/* Búsqueda optimizada */}
                 <div>
                   <Label htmlFor="search" className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Buscar
                   </Label>
-                  <Input
-                    id="search"
-                    type="text"
-                    placeholder="Buscar productos..."
-                    value={filters.search}
-                    onChange={(e) => handleFilterChange("search", e.target.value)}
-                    className="border-secondary/30 focus:border-action h-9 xs:h-10 text-sm xs:text-base"
-                  />
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                    <Input
+                      id="search"
+                      type="text"
+                      placeholder="Buscar productos..."
+                      value={localSearch}
+                      onChange={(e) => handleSearchChange(e.target.value)}
+                      className="border-secondary/30 focus:border-action h-9 xs:h-10 text-sm xs:text-base pl-10"
+                    />
+                    {isSearching && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        <div className="animate-spin h-4 w-4 border-2 border-action border-t-transparent rounded-full" />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Categoría */}
                 <div>
                   <Label className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Categoría
-                  </Label>
-                  <Select value={filters.category} onValueChange={(value) => handleFilterChange("category", value)}>
+                  </Label>                  <Select value={localFilters.category} onValueChange={(value) => handleFilterChange("category", value)}>
                     <SelectTrigger className="h-9 xs:h-10 text-sm xs:text-base">
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
@@ -281,8 +311,7 @@ const Shop = () => {
                 <div>
                   <Label className="text-primary font-medium mb-2 block text-sm xs:text-base">
                     Rango de Precio
-                  </Label>
-                  <Select value={filters.priceRange} onValueChange={(value) => handleFilterChange("priceRange", value)}>
+                  </Label>                  <Select value={localFilters.priceRange} onValueChange={(value) => handleFilterChange("priceRange", value)}>
                     <SelectTrigger className="h-9 xs:h-10 text-sm xs:text-base">
                       <SelectValue placeholder="Seleccionar rango" />
                     </SelectTrigger>
@@ -304,7 +333,7 @@ const Shop = () => {
                     id="artisan"
                     type="text"
                     placeholder="Buscar por artesano..."
-                    value={filters.artisan}
+                    value={localFilters.artisan}
                     onChange={(e) => handleFilterChange("artisan", e.target.value)}
                     className="border-secondary/30 focus:border-action h-9 xs:h-10 text-sm xs:text-base"
                   />
@@ -328,21 +357,38 @@ const Shop = () => {
                 </Button>
               </div>
             ) : (
-              <>
-                <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <>                <div className="flex items-center justify-between mb-4 sm:mb-6">
                   <p className="text-secondary text-sm xs:text-base">
                     {filteredProducts.length} {filteredProducts.length === 1 ? 'producto encontrado' : 'productos encontrados'}
                   </p>
                 </div>
 
-                <div className={viewMode === "grid" 
-                  ? "grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
-                  : "space-y-4 sm:space-y-6"
-                }>
-                  {filteredProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+                {viewMode === "grid" ? (
+                  <VirtualizedProductGrid products={filteredProducts} />
+                ) : (
+                  <div className="space-y-4 sm:space-y-6">
+                    {filteredProducts.map((product) => (
+                      <div key={product.id} className="flex bg-white rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow">
+                        <img 
+                          src={product.image} 
+                          alt={product.name}
+                          className="w-24 h-24 object-cover rounded-lg mr-4"
+                        />
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-primary mb-1">{product.name}</h3>
+                          <p className="text-sm text-secondary mb-2">{product.description}</p>
+                          <p className="text-sm text-action font-medium">Por {product.artisan}</p>
+                          <div className="flex justify-between items-center mt-2">
+                            <span className="text-lg font-bold text-action">${product.price.toLocaleString()}</span>
+                            <Button size="sm" className="bg-action hover:bg-action/90">
+                              Ver Detalles
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>

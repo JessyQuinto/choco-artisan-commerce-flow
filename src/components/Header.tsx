@@ -1,12 +1,12 @@
 import { ShoppingCart, Search, Menu, User, LogOut, X, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useStore, useAuth } from "@/store/useStore";
 import Logo from "./Logo";
 
-const Header = () => {
+const Header = memo(() => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   
@@ -14,28 +14,51 @@ const Header = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
-  };
+  }, []);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const toggleSearch = useCallback(() => {
+    setIsSearchOpen(prev => !prev);
+  }, []);
+
+  const handleSearch = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
       closeMenu();
     }
-  };
+  }, [searchQuery, navigate, closeMenu]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logout();
-    navigate('/');
     closeMenu();
-  };
+    navigate('/');
+  }, [logout, closeMenu, navigate]);
+
+  // Memoize cart count display
+  const cartCountDisplay = useMemo(() => {
+    if (cartCount === 0) return null;
+    return cartCount > 99 ? '99+' : cartCount.toString();
+  }, [cartCount]);
+
+  // Memoize wishlist count
+  const wishlistCount = useMemo(() => {
+    return wishlist.length;
+  }, [wishlist.length]);
+
+  // Navigation items for memoization
+  const navigationItems = useMemo(() => [
+    { to: "/", label: "Inicio" },
+    { to: "/shop", label: "Tienda" },
+    { to: "/about", label: "Nosotros" },
+    { to: "/contact", label: "Contacto" }
+  ], []);
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-sm">
@@ -48,20 +71,17 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-4 xl:space-x-6">
-            <Link to="/" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
-              Inicio
-            </Link>
-            <Link to="/shop" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
-              Tienda
-            </Link>
+            {navigationItems.map((item) => (
+              <Link 
+                key={item.to}
+                to={item.to} 
+                className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all"
+              >
+                {item.label}
+              </Link>
+            ))}
             <Link to="/stories" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
               Historias
-            </Link>
-            <Link to="/about" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
-              Sobre Nosotros
-            </Link>
-            <Link to="/contact" className="text-primary hover:text-action font-medium py-2 px-3 rounded-lg hover:bg-action/5 transition-all">
-              Contacto
             </Link>
           </nav>
 
@@ -84,7 +104,7 @@ const Header = () => {
                   type="button" 
                   variant="ghost" 
                   size="sm" 
-                  onClick={() => setIsSearchOpen(false)}
+                  onClick={toggleSearch}
                   className="shrink-0"
                 >
                   <X className="h-4 w-4" />
@@ -95,7 +115,7 @@ const Header = () => {
                 variant="ghost" 
                 size="sm" 
                 className="text-secondary hover:text-action hover:bg-background p-2 rounded-lg"
-                onClick={() => setIsSearchOpen(true)}
+                onClick={toggleSearch}
               >
                 <Search className="h-4 w-4" />
               </Button>
@@ -149,9 +169,9 @@ const Header = () => {
             <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg" asChild>
               <Link to="/wishlist">
                 <Heart className="h-4 w-4" />
-                {wishlist.length > 0 && (
+                {wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs font-medium shadow-md">
-                    {wishlist.length}
+                    {wishlistCount > 99 ? '99+' : wishlistCount}
                   </span>
                 )}
               </Link>
@@ -161,9 +181,9 @@ const Header = () => {
             <Button variant="ghost" size="sm" className="relative text-secondary hover:text-action hover:bg-action/5 p-2 rounded-lg" asChild>
               <Link to="/cart">
                 <ShoppingCart className="h-4 w-4" />
-                {cartCount > 0 && (
+                {cartCountDisplay && (
                   <span className="absolute -top-1 -right-1 bg-action text-white text-xs rounded-full h-4 w-4 md:h-5 md:w-5 flex items-center justify-center text-[10px] md:text-xs font-medium shadow-md">
-                    {cartCount}
+                    {cartCountDisplay}
                   </span>
                 )}
               </Link>
@@ -285,6 +305,8 @@ const Header = () => {
       </div>
     </header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

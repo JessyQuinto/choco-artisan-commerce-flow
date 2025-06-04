@@ -1,8 +1,41 @@
 
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import { memo, useMemo } from "react";
+import { Link } from "react-router-dom";
 import Logo from "./Logo";
 
-const Footer = () => {
+const Footer = memo(() => {
+  // Memoize footer links to prevent unnecessary re-renders
+  const footerLinks = useMemo(() => ({
+    quickLinks: [
+      { to: "/", label: "Inicio" },
+      { to: "/shop", label: "Tienda" },
+      { to: "/stories", label: "Historias Culturales" },
+      { to: "/about", label: "Sobre Nosotros" },
+      { to: "/contact", label: "Contacto" }
+    ],
+    categories: [
+      { to: "/shop?category=ceramica", label: "Cerámica" },
+      { to: "/shop?category=textiles", label: "Textiles" },
+      { to: "/shop?category=madera", label: "Madera" },
+      { to: "/shop?category=joyeria", label: "Joyería" },
+      { to: "/shop?category=gastronomia", label: "Gastronomía" }
+    ],
+    support: [
+      { to: "/help", label: "Ayuda" },
+      { to: "/shipping", label: "Envíos" },
+      { to: "/returns", label: "Devoluciones" },
+      { to: "/terms", label: "Términos y Condiciones" },
+      { to: "/privacy", label: "Política de Privacidad" }
+    ]
+  }), []);
+
+  const socialLinks = useMemo(() => [
+    { href: "https://facebook.com", icon: Facebook, label: "Facebook" },
+    { href: "https://instagram.com", icon: Instagram, label: "Instagram" },
+    { href: "https://twitter.com", icon: Twitter, label: "Twitter" }
+  ], []);
+
   return (
     <footer className="bg-amber-900 text-white relative z-10 w-full">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20">
@@ -20,11 +53,16 @@ const Footer = () => {
           <div className="space-y-3 sm:space-y-4">
             <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Enlaces Rápidos</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Inicio</a></li>
-              <li><a href="#tienda" className="text-gray-300 hover:text-white transition-colors">Tienda</a></li>
-              <li><a href="#historias" className="text-gray-300 hover:text-white transition-colors">Historias Culturales</a></li>
-              <li><a href="#nosotros" className="text-gray-300 hover:text-white transition-colors">Sobre Nosotros</a></li>
-              <li><a href="#contacto" className="text-gray-300 hover:text-white transition-colors">Contacto</a></li>
+              {footerLinks.quickLinks.map((link) => (
+                <li key={link.to}>
+                  <Link 
+                    to={link.to} 
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -32,11 +70,16 @@ const Footer = () => {
           <div className="space-y-3 sm:space-y-4">
             <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Categorías</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Cestería</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Textiles</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Cerámica</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Joyería</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Instrumentos</a></li>
+              {footerLinks.categories.map((link) => (
+                <li key={link.to}>
+                  <Link 
+                    to={link.to} 
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -44,11 +87,16 @@ const Footer = () => {
           <div className="space-y-3 sm:space-y-4">
             <h4 className="font-bold text-sm xs:text-base sm:text-lg text-amber-400">Soporte</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs xs:text-sm">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Centro de Ayuda</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Política de Envíos</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Devoluciones</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Términos de Servicio</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Política de Privacidad</a></li>
+              {footerLinks.support.map((link) => (
+                <li key={link.to}>
+                  <Link 
+                    to={link.to} 
+                    className="text-gray-300 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
@@ -63,15 +111,18 @@ const Footer = () => {
             <div className="flex flex-col xs:flex-row items-center space-y-2 xs:space-y-0 xs:space-x-4 order-1 sm:order-2">
               <span className="text-gray-300 text-xs xs:text-sm">Síguenos:</span>
               <div className="flex space-x-3 sm:space-x-4">
-                <a href="#" className="text-gray-300 hover:text-white transition-colors p-1">
-                  <Facebook className="h-4 w-4 xs:h-5 xs:w-5" />
-                </a>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors p-1">
-                  <Instagram className="h-4 w-4 xs:h-5 xs:w-5" />
-                </a>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors p-1">
-                  <Twitter className="h-4 w-4 xs:h-5 xs:w-5" />
-                </a>
+                {socialLinks.map(({ href, icon: Icon, label }) => (
+                  <a 
+                    key={href}
+                    href={href} 
+                    className="text-gray-300 hover:text-white transition-colors p-1"
+                    aria-label={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon className="h-4 w-4 xs:h-5 xs:w-5" />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
@@ -79,6 +130,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;
