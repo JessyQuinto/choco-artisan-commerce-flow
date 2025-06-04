@@ -22,7 +22,10 @@ const LazyImage = ({ src, alt, className, placeholder }: LazyImageProps) => {
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { 
+        threshold: 0.1,
+        rootMargin: '50px' // Load images 50px before they enter viewport
+      }
     );
 
     if (imgRef.current) {
@@ -35,20 +38,21 @@ const LazyImage = ({ src, alt, className, placeholder }: LazyImageProps) => {
   const defaultPlaceholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjRmMmYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM4ODZmNjMiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5DYXJnYW5kby4uLjwvdGV4dD48L3N2Zz4=";
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative overflow-hidden bg-gray-100", className)}>
       <img
         ref={imgRef}
         src={isInView ? src : (placeholder || defaultPlaceholder)}
         alt={alt}
         className={cn(
-          "w-full h-full object-cover transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-70"
+          "w-full h-full object-cover transition-opacity duration-500 ease-in-out",
+          isLoaded ? "opacity-100" : "opacity-0"
         )}
         onLoad={() => setIsLoaded(true)}
         loading="lazy"
+        decoding="async"
       />
       {!isLoaded && isInView && (
-        <div className="absolute inset-0 bg-primary-background animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
       )}
     </div>
   );

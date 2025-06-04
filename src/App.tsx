@@ -5,24 +5,28 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import OrderConfirmation from "./pages/OrderConfirmation";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Profile from "./pages/Profile";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Terms from "./pages/Terms";
-import Wishlist from "./pages/Wishlist";
-import Stories from "./pages/Stories";
-import StoryDetail from "./pages/StoryDetail";
-import NotFound from "./pages/NotFound";
+import LoadingSpinner from "@/components/LoadingSpinner";
+
+// Lazy load all pages for better performance
+const Index = lazy(() => import("./pages/Index"));
+const Shop = lazy(() => import("./pages/Shop"));
+const ProductDetail = lazy(() => import("./pages/ProductDetail"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const Profile = lazy(() => import("./pages/Profile"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Wishlist = lazy(() => import("./pages/Wishlist"));
+const Stories = lazy(() => import("./pages/Stories"));
+const StoryDetail = lazy(() => import("./pages/StoryDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +36,12 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const PageWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<LoadingSpinner />}>
+    {children}
+  </Suspense>
+);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -44,21 +54,21 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 {/* Public routes */}
-                <Route path="/" element={<Index />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/product-detail" element={<ProductDetail />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/stories" element={<Stories />} />
-                <Route path="/story/:id" element={<StoryDetail />} />
+                <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+                <Route path="/shop" element={<PageWrapper><Shop /></PageWrapper>} />
+                <Route path="/product-detail" element={<PageWrapper><ProductDetail /></PageWrapper>} />
+                <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+                <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
+                <Route path="/stories" element={<PageWrapper><Stories /></PageWrapper>} />
+                <Route path="/story/:id" element={<PageWrapper><StoryDetail /></PageWrapper>} />
                 
                 {/* Auth routes (redirect if already logged in) */}
                 <Route 
                   path="/login" 
                   element={
                     <ProtectedRoute requireAuth={false}>
-                      <Login />
+                      <PageWrapper><Login /></PageWrapper>
                     </ProtectedRoute>
                   } 
                 />
@@ -66,21 +76,21 @@ const App = () => (
                   path="/register" 
                   element={
                     <ProtectedRoute requireAuth={false}>
-                      <Register />
+                      <PageWrapper><Register /></PageWrapper>
                     </ProtectedRoute>
                   } 
                 />
                 
                 {/* Semi-protected routes (can be used without auth but enhanced with auth) */}
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/cart" element={<PageWrapper><Cart /></PageWrapper>} />
+                <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
                 
                 {/* Protected routes (require authentication) */}
                 <Route 
                   path="/profile" 
                   element={
                     <ProtectedRoute>
-                      <Profile />
+                      <PageWrapper><Profile /></PageWrapper>
                     </ProtectedRoute>
                   } 
                 />
@@ -88,7 +98,7 @@ const App = () => (
                   path="/checkout" 
                   element={
                     <ProtectedRoute>
-                      <Checkout />
+                      <PageWrapper><Checkout /></PageWrapper>
                     </ProtectedRoute>
                   } 
                 />
@@ -96,13 +106,13 @@ const App = () => (
                   path="/order-confirmation" 
                   element={
                     <ProtectedRoute>
-                      <OrderConfirmation />
+                      <PageWrapper><OrderConfirmation /></PageWrapper>
                     </ProtectedRoute>
                   } 
                 />
                 
                 {/* Catch-all route */}
-                <Route path="*" element={<NotFound />} />
+                <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
               </Routes>
             </BrowserRouter>
           </div>
