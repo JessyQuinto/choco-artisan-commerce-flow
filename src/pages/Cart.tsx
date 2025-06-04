@@ -1,14 +1,13 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, User, UserPlus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useStore, useCartItems, useCartCount, useCartTotal } from "@/store/useStore";
+import { useStore, useCartItems, useCartCount, useCartTotal, useAuth } from "@/store/useStore";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const Cart = () => {
@@ -20,6 +19,7 @@ const Cart = () => {
   const cartItems = useCartItems();
   const cartCount = useCartCount();
   const cartTotal = useCartTotal();
+  const { isLoggedIn } = useAuth();
   const { showSuccess, showError } = useNotifications();
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -125,6 +125,7 @@ const Cart = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+              
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
                 <h2 className="text-lg sm:text-xl font-semibold text-primary">
                   Productos ({cartCount} {cartCount === 1 ? 'artículo' : 'artículos'})
@@ -140,7 +141,6 @@ const Cart = () => {
               {cartItems.map((item) => (
                 <div key={item.id} className="bg-white border border-secondary/20 rounded-xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex flex-col space-y-4">
-                    {/* Mobile Layout */}
                     <div className="flex space-x-4">
                       <div className="flex-shrink-0">
                         <Link to={`/product-detail?slug=${item.slug}`}>
@@ -179,7 +179,6 @@ const Cart = () => {
                       </Button>
                     </div>
 
-                    {/* Quantity and Total Row */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2 sm:space-x-3">
                         <span className="text-xs sm:text-sm text-secondary font-medium">Cantidad:</span>
@@ -261,18 +260,61 @@ const Cart = () => {
                 </label>
               </div>
 
-              <Button
-                onClick={handleCheckout}
-                disabled={!acceptTerms || cartCount === 0}
-                className="w-full bg-action hover:bg-action/90 text-white py-3 sm:py-4 text-sm sm:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
-                asChild={acceptTerms && cartCount > 0}
-              >
-                {acceptTerms && cartCount > 0 ? (
-                  <Link to="/checkout">Proceder al Checkout</Link>
+              {/* Opciones de Checkout */}
+              <div className="space-y-3">
+                {isLoggedIn ? (
+                  <Button
+                    onClick={handleCheckout}
+                    disabled={!acceptTerms || cartCount === 0}
+                    className="w-full bg-action hover:bg-action/90 text-white py-3 sm:py-4 text-sm sm:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    asChild={acceptTerms && cartCount > 0}
+                  >
+                    {acceptTerms && cartCount > 0 ? (
+                      <Link to="/checkout" className="flex items-center justify-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>Checkout</span>
+                      </Link>
+                    ) : (
+                      <span>Checkout</span>
+                    )}
+                  </Button>
                 ) : (
-                  <span>Proceder al Checkout</span>
+                  <>
+                    <Button
+                      onClick={handleCheckout}
+                      disabled={!acceptTerms || cartCount === 0}
+                      className="w-full bg-action hover:bg-action/90 text-white py-3 sm:py-4 text-sm sm:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                      asChild={acceptTerms && cartCount > 0}
+                    >
+                      {acceptTerms && cartCount > 0 ? (
+                        <Link to="/guest-checkout" className="flex items-center justify-center space-x-2">
+                          <UserPlus className="h-4 w-4" />
+                          <span>Checkout como Invitado</span>
+                        </Link>
+                      ) : (
+                        <span>Checkout como Invitado</span>
+                      )}
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={handleCheckout}
+                      disabled={!acceptTerms || cartCount === 0}
+                      className="w-full border-action text-action hover:bg-action hover:text-white py-3 sm:py-4 text-sm sm:text-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                      asChild={acceptTerms && cartCount > 0}
+                    >
+                      {acceptTerms && cartCount > 0 ? (
+                        <Link to="/login?redirect=/checkout" className="flex items-center justify-center space-x-2">
+                          <User className="h-4 w-4" />
+                          <span>Iniciar Sesión y Checkout</span>
+                        </Link>
+                      ) : (
+                        <span>Iniciar Sesión</span>
+                      )}
+                    </Button>
+                  </>
                 )}
-              </Button>
+              </div>
 
               <p className="text-xs text-secondary mt-3 sm:mt-4 text-center">
                 Compra segura y protegida

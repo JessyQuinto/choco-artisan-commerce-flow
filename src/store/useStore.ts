@@ -19,6 +19,17 @@ interface CartItem extends Product {
   total: number;
 }
 
+interface Address {
+  id: string;
+  name: string;
+  fullName: string;
+  address: string;
+  city: string;
+  postalCode: string;
+  phone?: string;
+  isDefault?: boolean;
+}
+
 interface User {
   id: string;
   name: string;
@@ -27,13 +38,7 @@ interface User {
   lastName: string;
   avatar?: string;
   phone?: string;
-  address?: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-    country: string;
-  };
+  addresses?: Address[];
 }
 
 interface AuthState {
@@ -70,16 +75,27 @@ interface Store {
   filters: SearchFilters;
   isLoading: boolean;
   error: string | null;
-    // Cart actions
+  
+  // Cart actions
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: number) => void;
   updateCartQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
-    // Auth actions
+  completeOrder: () => void;
+  
+  // Auth actions
   login: (userData: User, token?: string) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
-    // Wishlist actions
+  setAuthLoading: (loading: boolean) => void;
+  
+  // Address actions
+  addAddress: (address: Omit<Address, 'id'>) => void;
+  updateAddress: (id: string, address: Partial<Address>) => void;
+  deleteAddress: (id: string) => void;
+  setDefaultAddress: (id: string) => void;
+  
+  // Wishlist actions
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: number) => void;
   
@@ -146,7 +162,6 @@ export const useStore = create<Store>()(
         const newCount = newCartItems.reduce((sum, item) => sum + item.quantity, 0);
         const newTotal = newCartItems.reduce((sum, item) => sum + item.total, 0);
         
-        // Update last activity timestamp
         localStorage.setItem('lastCartActivity', Date.now().toString());
         
         set({
@@ -192,11 +207,16 @@ export const useStore = create<Store>()(
           cartTotal: newTotal
         });
       },
-        clearCart: () => {
+      
+      clearCart: () => {
         set({ cartItems: [], cartCount: 0, cartTotal: 0 });
       },
       
-      // Auth actions - Simplified without API calls
+      completeOrder: () => {
+        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
+      },
+      
+      // Auth actions
       login: (userData, token) => {
         localStorage.setItem('lastCartActivity', Date.now().toString());
         set({
@@ -219,7 +239,8 @@ export const useStore = create<Store>()(
           }
         });
       },
-        updateUser: (userData) => {
+      
+      updateUser: (userData) => {
         const { auth } = get();
         if (auth.user) {
           set({
@@ -230,6 +251,96 @@ export const useStore = create<Store>()(
           });
         }
       },
+      
+      setAuthLoading: (loading) => {
+        const { auth } = get();
+        set({
+          auth: {
+            ...auth,
+            isLoading: loading
+          }
+        });
+      },
+      
+      // Address actions
+      addAddress: (addressData) => {
+        const { auth } = get();
+        if (!auth.user) return;
+        
+        const newAddress: Address = {
+          ...addressData,
+          id: Date.now().toString(),
+        };
+        
+        const addresses = auth.user.addresses || [];
+        const updatedAddresses = [...addresses, newAddress];
+        
+        set({
+          auth: {
+            ...auth,
+            user: {
+              ...auth.user,
+              addresses: updatedAddresses
+            }
+          }
+        });
+      },
+      
+      updateAddress: (id, addressData) => {
+        const { auth } = get();
+        if (!auth.user || !auth.user.addresses) return;
+        
+        const updatedAddresses = auth.user.addresses.map(addr =>
+          addr.id === id ? { ...addr, ...addressData } : addr
+        );
+        
+        set({
+          auth: {
+            ...auth,
+            user: {
+              ...auth.user,
+              addresses: updatedAddresses
+            }
+          }
+        });
+      },
+      
+      deleteAddress: (id) => {
+        const { auth } = get();
+        if (!auth.user || !auth.user.addresses) return;
+        
+        const updatedAddresses = auth.user.addresses.filter(addr => addr.id !== id);
+        
+        set({
+          auth: {
+            ...auth,
+            user: {
+              ...auth.user,
+              addresses: updatedAddresses
+            }
+          }
+        });
+      },
+      
+      setDefaultAddress: (id) => {
+        const { auth } = get();
+        if (!auth.user || !auth.user.addresses) return;
+        
+        const updatedAddresses = auth.user.addresses.map(addr => ({
+          ...addr,
+          isDefault: addr.id === id
+        }));
+        
+        set({
+          auth: {
+            ...auth,
+            user: {
+              ...auth.user,
+              addresses: updatedAddresses
+            }
+          }
+        });
+      },
 
       // Wishlist actions
       addToWishlist: (product) => {
@@ -238,7 +349,8 @@ export const useStore = create<Store>()(
           set({ wishlist: [...wishlist, product] });
         }
       },
-        removeFromWishlist: (productId) => {
+      
+      removeFromWishlist: (productId) => {
         const { wishlist } = get();
         set({ wishlist: wishlist.filter(item => item.id !== productId) });
       },

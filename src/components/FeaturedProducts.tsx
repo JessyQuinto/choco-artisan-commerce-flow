@@ -1,9 +1,12 @@
 
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
+import LoadingSpinner from "./LoadingSpinner";
+import { useState, useEffect } from "react";
 
 const FeaturedProducts = () => {
-  const featuredProducts = [
+  const [loading, setLoading] = useState(true);
+  const [featuredProducts] = useState([
     {
       id: 1,
       name: "Canasta Werregue Tradicional",
@@ -44,35 +47,82 @@ const FeaturedProducts = () => {
       artisan: "Carlos Moreno",
       origin: "Chocó"
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    // Simular carga de datos
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-background to-primary-background" id="productos-destacados">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-primary-text">
+              Productos Destacados
+            </h2>
+            <p className="text-lg text-primary-secondary max-w-2xl mx-auto">
+              Descubre las creaciones más populares de nuestros talentosos artesanos
+            </p>
+          </div>
+          <LoadingSpinner 
+            variant="skeleton" 
+            skeletonType="product" 
+            count={4}
+            text="Cargando productos destacados..."
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          />
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-primary-background" id="productos-destacados">
+    <section 
+      className="py-20 bg-gradient-to-b from-background to-primary-background animate-fade-in" 
+      id="productos-destacados"
+      aria-labelledby="featured-products-title"
+    >
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16 space-y-4">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-text">
+        <header className="text-center mb-16 space-y-4">
+          <h2 
+            id="featured-products-title"
+            className="text-3xl md:text-4xl font-bold text-primary-text"
+          >
             Productos Destacados
           </h2>
-          <p className="text-lg text-primary-secondary max-w-2xl mx-auto">
+          <p className="text-lg text-primary-secondary max-w-2xl mx-auto leading-relaxed">
             Descubre las creaciones más populares de nuestros talentosos artesanos, 
             cada una con su propia historia y significado cultural.
           </p>
-        </div>
+        </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-12">
+          {featuredProducts.map((product, index) => (
+            <div 
+              key={product.id} 
+              className="animate-scale-in"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <ProductCard product={product} />
+            </div>
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <footer className="text-center">
           <Link
             to="/shop"
-            className="inline-flex items-center px-8 py-4 bg-primary-action hover:bg-primary-action/90 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+            className="inline-flex items-center px-8 py-4 bg-primary-action hover:bg-primary-action/90 text-background font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-action focus:ring-offset-2 min-h-[48px]"
+            aria-label="Ver todos los productos disponibles en la tienda"
           >
             Ver Todos los Productos
           </Link>
-        </div>
+        </footer>
       </div>
     </section>
   );

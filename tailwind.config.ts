@@ -20,17 +20,17 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Paleta principal optimizada
-				'primary-text': '#181311',
-				'primary-secondary': '#886f63', 
-				'primary-background': '#f4f2f0',
+				// Paleta principal optimizada con mejor contraste
+				'primary-text': '#0f0e0d',
+				'primary-secondary': '#6b5b4a', 
+				'primary-background': '#faf9f7',
 				'primary-action': '#e55d19',
 				'primary-white': '#ffffff',
 				
-				// Aliases para facilidad de uso
+				// Aliases para facilidad de uso con mejor contraste
 				'action': '#e55d19',
-				'secondary': '#886f63',
-				'primary': '#181311',
+				'secondary': '#6b5b4a',
+				'primary': '#0f0e0d',
 				'background': '#ffffff',
 				
 				// Colores shadcn originales para compatibilidad
@@ -75,11 +75,56 @@ export default {
 				'accordion-up': {
 					from: { height: 'var(--radix-accordion-content-height)' },
 					to: { height: '0' }
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'scale-in': {
+					'0%': {
+						transform: 'scale(0.95)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					}
+				},
+				'slide-up': {
+					'0%': {
+						transform: 'translateY(100%)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'fade-in': 'fade-in 0.4s ease-out',
+				'scale-in': 'scale-in 0.3s ease-out',
+				'slide-up': 'slide-up 0.5s ease-out'
+			},
+			spacing: {
+				'18': '4.5rem',
+				'88': '22rem',
+				'128': '32rem'
+			},
+			fontSize: {
+				'2xs': ['0.625rem', { lineHeight: '0.75rem' }],
+			},
+			screens: {
+				'xs': '475px',
+				'3xl': '1600px'
 			}
 		}
 	},

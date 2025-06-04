@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import { useStore } from "@/store/useStore";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useValidation, CommonSchemas } from "@/hooks/useValidation";
@@ -21,7 +20,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, setAuthLoading } = useStore();
+  const { login } = useStore();
   const { showSuccess, showError } = useNotifications();
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +55,6 @@ const Login = () => {
     }
 
     setIsLoading(true);
-    setAuthLoading(true);
 
     try {
       // Simulate quick processing without API call
@@ -85,7 +83,6 @@ const Login = () => {
       showError("Error al iniciar sesión. Intenta nuevamente.");
     } finally {
       setIsLoading(false);
-      setAuthLoading(false);
     }
   };
 
@@ -191,7 +188,7 @@ const Login = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center space-x-2">
-                    <LoadingSpinner />
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     <span className="text-sm sm:text-base">Iniciando sesión...</span>
                   </div>
                 ) : (
