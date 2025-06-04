@@ -1,73 +1,122 @@
 
-import { useEffect, useState } from 'react';
-import { AlertTriangle, ShoppingCart, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { X, ShoppingCart, Gift, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useStore } from '@/store/useStore';
-import { useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useCart } from '@/store/useStore';
+import { FadeIn, SlideIn } from './CSSAnimations';
 
 const CartAbandonmentNotice = () => {
-  const { cartCount, cartTotal } = useStore();
   const [showNotice, setShowNotice] = useState(false);
-  const [hasBeenDismissed, setHasBeenDismissed] = useState(false);
-  const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
+  const { items } = useCart();
 
   useEffect(() => {
-    if (cartCount > 0 && !hasBeenDismissed) {
-      const timer = setTimeout(() => {
-        setShowNotice(true);
-      }, 30000); // Show after 30 seconds of inactivity
+    // Show notice if cart has items and user hasn't been active for 5 minutes
+    const checkAbandonedCart = () => {
+      if (items.length > 0) {
+        const lastActivity = localStorage.getItem('lastCartActivity');
+        const now = Date.now();
+        
+        if (!lastActivity || now - parseInt(lastActivity) > 5 * 60 * 1000) {
+          setShowNotice(true);
+        }
+      }
+    };
 
-      return () => clearTimeout(timer);
+    const timer = setTimeout(checkAbandonedCart, 5 * 60 * 1000); // Check after 5 minutes
+    return () => clearTimeout(timer);
+  }, [items.length]);
+
+  useEffect(() => {
+    if (showNotice && timeLeft > 0) {
+      const countdown = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+      
+      return () => clearInterval(countdown);
     }
-  }, [cartCount, hasBeenDismissed]);
+    
+    if (timeLeft === 0) {
+      setShowNotice(false);
+    }
+  }, [showNotice, timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleContinueShopping = () => {
+    localStorage.setItem('lastCartActivity', Date.now().toString());
+    setShowNotice(false);
+  };
 
   const handleDismiss = () => {
     setShowNotice(false);
-    setHasBeenDismissed(true);
-    localStorage.setItem('cartNotificationDismissed', Date.now().toString());
+    localStorage.setItem('cartNoticeDismissed', Date.now().toString());
   };
 
-  const handleGoToCart = () => {
-    navigate('/cart');
-    setShowNotice(false);
-  };
-
-  if (!showNotice || cartCount === 0) return null;
+  if (!showNotice || items.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 bg-white border border-orange-200 rounded-lg shadow-lg p-4 max-w-sm z-50 animate-in slide-in-from-bottom">
-      <div className="flex items-start space-x-3">
-        <div className="flex-shrink-0">
-          <AlertTriangle className="h-5 w-5 text-orange-500" />
-        </div>
-        <div className="flex-1">
-          <h4 className="text-sm font-semibold text-gray-900">
-            ¡No olvides tu carrito!
-          </h4>
-          <p className="text-xs text-gray-600 mt-1">
-            Tienes {cartCount} {cartCount === 1 ? 'producto' : 'productos'} por ${cartTotal.toLocaleString()}
-          </p>
-          <div className="flex space-x-2 mt-3">
+    <FadeIn className="fixed bottom-4 right-4 z-50 max-w-sm">
+      <SlideIn direction="up">
+        <Card className="p-4 shadow-lg border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50 to-amber-50">
+          <div className="flex items-start justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="h-5 w-5 text-orange-600" />
+              <h3 className="font-semibold text-gray-900">¡No olvides tu pedido!</h3>
+            </div>
             <Button
-              size="sm"
-              onClick={handleGoToCart}
-              className="bg-action hover:bg-action/90 text-white text-xs h-7 px-3"
-            >
-              <ShoppingCart className="h-3 w-3 mr-1" />
-              Ver Carrito
-            </Button>
-            <Button
-              size="sm"
               variant="ghost"
+              size="sm"
               onClick={handleDismiss}
-              className="text-gray-500 hover:text-gray-700 text-xs h-7 px-2"
+              className="h-6 w-6 p-0 hover:bg-gray-100"
             >
-              <X className="h-3 w-3" />
+              <X className="h-4 w-4" />
             </Button>
           </div>
-        </div>
-      </div>
-    </div>
+          
+          <div className="space-y-3">
+            <p className="text-sm text-gray-600">
+              Tienes <Badge variant="secondary">{items.length}</Badge> productos esperándote
+            </p>
+            
+            <div className="flex items-center gap-2 text-sm text-orange-600">
+              <Clock className="h-4 w-4" />
+              <span>Oferta especial expira en: {formatTime(timeLeft)}</span>
+            </div>
+            
+            <div className="flex items-center gap-2 p-2 bg-green-50 rounded-lg">
+              <Gift className="h-4 w-4 text-green-600" />
+              <span className="text-sm text-green-700 font-medium">
+                ¡Envío gratis en pedidos +$50!
+              </span>
+            </div>
+            
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleContinueShopping}
+                className="flex-1 bg-orange-600 hover:bg-orange-700"
+                size="sm"
+              >
+                Finalizar Compra
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleDismiss}
+                size="sm"
+              >
+                Después
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </SlideIn>
+    </FadeIn>
   );
 };
 
