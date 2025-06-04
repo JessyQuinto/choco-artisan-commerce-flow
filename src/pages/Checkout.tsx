@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { useStore } from "@/store/useStore";
+import { useStore, useCartItems, useCartTotal } from "@/store/useStore";
 
 const Checkout = () => {
-  const { cartItems, cartTotal, completeOrder } = useStore();
+  const { completeOrder } = useStore();
+  const cartItems = useCartItems();
+  const cartTotal = useCartTotal();
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
   const [processing, setProcessing] = useState(false);
   const [shippingInfo, setShippingInfo] = useState({

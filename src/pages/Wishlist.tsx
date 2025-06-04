@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
-import { useStore } from "@/store/useStore";
+import { useWishlist } from "@/store/useStore";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Heart, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Wishlist = () => {
-  const { wishlist } = useStore();
+  const wishlist = useWishlist();
 
   return (
     <div className="min-h-screen bg-background">

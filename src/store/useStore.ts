@@ -347,10 +347,9 @@ export const useStore = create<Store>()(
 
 // Selectors for better performance
 export const useAuth = () => useStore(state => state.auth);
-export const useCart = () => useStore(state => ({ 
-  items: state.cartItems, 
-  count: state.cartCount, 
-  total: state.cartTotal 
-}));
+export const useCartItems = () => useStore(state => state.cartItems);
+export const useCartCount = () => useStore(state => state.cartCount);
+export const useCartTotal = () => useStore(state => state.cartTotal);
+export const useCart = () => useStore(state => state.cartItems);
 export const useWishlist = () => useStore(state => state.wishlist);
 export const useFilters = () => useStore(state => state.filters);

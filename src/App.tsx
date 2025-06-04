@@ -46,7 +46,18 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => (
 
 const App = () => {
   useEffect(() => {
-    // Register service worker
+    // Unregister service worker in development
+    if ('serviceWorker' in navigator && import.meta.env.DEV) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister().then(() => {
+            console.log('SW unregistered for development');
+          });
+        }
+      });
+    }
+    
+    // Register service worker only in production
     if ('serviceWorker' in navigator && import.meta.env.PROD) {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {

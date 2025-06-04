@@ -4,13 +4,13 @@ import { X, ShoppingCart, Gift, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useCart } from '@/store/useStore';
+import { useCartItems } from '@/store/useStore';
 import { FadeIn, SlideIn } from './CSSAnimations';
 
 const CartAbandonmentNotice = () => {
   const [showNotice, setShowNotice] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes
-  const { items } = useCart();
+  const items = useCartItems();
 
   // Memoize the check function to prevent recreation on every render
   const checkAbandonedCart = useCallback(() => {
@@ -32,15 +32,13 @@ const CartAbandonmentNotice = () => {
       setShowNotice(false);
     }
   }, [items.length]);
-
   useEffect(() => {
     // Only set up the timer if we haven't already shown the notice
     if (items.length > 0 && !showNotice) {
       const timer = setTimeout(checkAbandonedCart, 5 * 60 * 1000); // Check after 5 minutes
       return () => clearTimeout(timer);
     }
-  }, [items.length, showNotice, checkAbandonedCart]);
-
+  }, [items.length, showNotice]);
   useEffect(() => {
     let countdown: NodeJS.Timeout;
     
@@ -59,7 +57,7 @@ const CartAbandonmentNotice = () => {
     return () => {
       if (countdown) clearInterval(countdown);
     };
-  }, [showNotice, timeLeft]);
+  }, [showNotice]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

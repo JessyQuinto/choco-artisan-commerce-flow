@@ -9,11 +9,13 @@ import { User, ShoppingBag, Heart, Edit2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useStore, useAuth } from "@/store/useStore";
+import { useStore, useAuth, useCartItems, useWishlist } from "@/store/useStore";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const Profile = () => {
-  const { updateUser, cartItems, wishlist } = useStore();
+  const { updateUser } = useStore();
+  const cartItems = useCartItems();
+  const wishlist = useWishlist();
   const { user, isLoggedIn } = useAuth();
   const { showSuccess, showError } = useNotifications();
   const navigate = useNavigate();

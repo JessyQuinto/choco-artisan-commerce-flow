@@ -8,18 +8,18 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useStore } from "@/store/useStore";
+import { useStore, useCartItems, useCartCount, useCartTotal } from "@/store/useStore";
 import { useNotifications } from "@/hooks/useNotifications";
 
 const Cart = () => {
   const { 
-    cartItems, 
-    cartCount, 
-    cartTotal, 
     updateCartQuantity, 
     removeFromCart, 
     clearCart 
   } = useStore();
+  const cartItems = useCartItems();
+  const cartCount = useCartCount();
+  const cartTotal = useCartTotal();
   const { showSuccess, showError } = useNotifications();
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
