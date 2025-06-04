@@ -43,6 +43,7 @@ export default defineConfig(({ mode }) => ({
       'react-router-dom',
       '@tanstack/react-query',
       'zustand',
+      'input-otp',
     ],
   },
 }));
