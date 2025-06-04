@@ -9,6 +9,7 @@ import CartAbandonmentNotice from "@/components/CartAbandonmentNotice";
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <main>
         <HeroSection />
         <FeaturedProducts />

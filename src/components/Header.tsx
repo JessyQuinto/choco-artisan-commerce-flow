@@ -32,18 +32,10 @@ const Header = () => {
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-    closeMenu();
-  };
-
   const navLinks = [
     { to: "/", label: "Inicio" },
     { to: "/shop", label: "Tienda" },
-    { action: () => scrollToSection('historias'), label: "Historias" },
+    { to: "/stories", label: "Historias" },
     { to: "/about", label: "Sobre Nosotros" },
     { to: "/contact", label: "Contacto" }
   ];
@@ -53,18 +45,10 @@ const Header = () => {
       isMobile ? 'py-2' : ''
     }`;
     
-    if (link.action) {
-      return (
-        <button key={link.label} onClick={link.action} className={`${className} ${isMobile ? 'text-left' : ''}`}>
-          {link.label}
-        </button>
-      );
-    }
-    
     return (
       <Link
         key={link.label}
-        to={link.to!}
+        to={link.to}
         className={className}
         onClick={isMobile ? closeMenu : undefined}
       >
