@@ -9,7 +9,6 @@ import { lazy, Suspense, useEffect } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import StickyHeader from "@/components/StickyHeader";
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -88,76 +87,72 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="choco-artesanal-theme">
         <TooltipProvider>
-          <ErrorBoundary>
-            <div className="w-full">
+          <ErrorBoundary>            <div className="w-full">
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <StickyHeader />
-                <div className="pt-20"> {/* Add padding to account for sticky header */}
-                  <Routes>
-                    {/* Public routes */}
-                    <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
-                    <Route path="/shop" element={<PageWrapper><Shop /></PageWrapper>} />
-                    <Route path="/product-detail" element={<PageWrapper><ProductDetail /></PageWrapper>} />
-                    <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
-                    <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
-                    <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
-                    <Route path="/stories" element={<PageWrapper><Stories /></PageWrapper>} />
-                    <Route path="/story/:id" element={<PageWrapper><StoryDetail /></PageWrapper>} />
-                    
-                    {/* Auth routes (redirect if already logged in) */}
-                    <Route 
-                      path="/login" 
-                      element={
-                        <ProtectedRoute requireAuth={false}>
-                          <PageWrapper><Login /></PageWrapper>
-                        </ProtectedRoute>
-                      } 
-                    />
-                    <Route 
-                      path="/register" 
-                      element={
-                        <ProtectedRoute requireAuth={false}>
-                          <PageWrapper><Register /></PageWrapper>
-                        </ProtectedRoute>
-                      } 
-                    />
-                    
-                    {/* Semi-protected routes (can be used without auth but enhanced with auth) */}
-                    <Route path="/cart" element={<PageWrapper><Cart /></PageWrapper>} />
-                    <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
-                    
-                    {/* Protected routes (require authentication) */}
-                    <Route 
-                      path="/profile" 
-                      element={
-                        <ProtectedRoute>
-                          <PageWrapper><Profile /></PageWrapper>
-                        </ProtectedRoute>
-                      } 
-                    />
-                    <Route 
-                      path="/checkout" 
-                      element={
-                        <ProtectedRoute>
-                          <PageWrapper><Checkout /></PageWrapper>
-                        </ProtectedRoute>
-                      } 
-                    />
-                    <Route 
-                      path="/order-confirmation" 
-                      element={
-                        <ProtectedRoute>
-                          <PageWrapper><OrderConfirmation /></PageWrapper>
-                        </ProtectedRoute>
-                      } 
-                    />
-                    
-                    {/* Catch-all route */}
-                    <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-                  </Routes>
-                </div>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={<PageWrapper><Index /></PageWrapper>} />
+                  <Route path="/shop" element={<PageWrapper><Shop /></PageWrapper>} />
+                  <Route path="/product-detail" element={<PageWrapper><ProductDetail /></PageWrapper>} />
+                  <Route path="/about" element={<PageWrapper><About /></PageWrapper>} />
+                  <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
+                  <Route path="/terms" element={<PageWrapper><Terms /></PageWrapper>} />
+                  <Route path="/stories" element={<PageWrapper><Stories /></PageWrapper>} />
+                  <Route path="/story/:id" element={<PageWrapper><StoryDetail /></PageWrapper>} />
+                  
+                  {/* Auth routes (redirect if already logged in) */}
+                  <Route 
+                    path="/login" 
+                    element={
+                      <ProtectedRoute requireAuth={false}>
+                        <PageWrapper><Login /></PageWrapper>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/register" 
+                    element={
+                      <ProtectedRoute requireAuth={false}>
+                        <PageWrapper><Register /></PageWrapper>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* Semi-protected routes (can be used without auth but enhanced with auth) */}
+                  <Route path="/cart" element={<PageWrapper><Cart /></PageWrapper>} />
+                  <Route path="/wishlist" element={<PageWrapper><Wishlist /></PageWrapper>} />
+                  
+                  {/* Protected routes (require authentication) */}
+                  <Route 
+                    path="/profile" 
+                    element={
+                      <ProtectedRoute>
+                        <PageWrapper><Profile /></PageWrapper>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/checkout" 
+                    element={
+                      <ProtectedRoute>
+                        <PageWrapper><Checkout /></PageWrapper>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/order-confirmation" 
+                    element={
+                      <ProtectedRoute>
+                        <PageWrapper><OrderConfirmation /></PageWrapper>
+                      </ProtectedRoute>
+                    } 
+                  />
+                  
+                  {/* Catch-all route */}
+                  <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
+                </Routes>
               </BrowserRouter>
             </div>
           </ErrorBoundary>

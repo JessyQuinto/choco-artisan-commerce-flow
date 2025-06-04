@@ -21,9 +21,10 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
+  const { addToCart, addToWishlist, removeFromWishlist } = useStore();
+  const wishlist = useStore(state => state.wishlist);
   const { showSuccess } = useNotifications();
-  const inWishlist = isInWishlist(product.id);
+  const inWishlist = wishlist.some(item => item.id === product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

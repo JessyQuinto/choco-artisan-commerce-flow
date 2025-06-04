@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
 
 const FeaturedProducts = () => {
@@ -65,12 +66,12 @@ const FeaturedProducts = () => {
         </div>
 
         <div className="text-center mt-12">
-          <a
-            href="/shop"
+          <Link
+            to="/shop"
             className="inline-flex items-center px-8 py-4 bg-primary-action hover:bg-primary-action/90 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             Ver Todos los Productos
-          </a>
+          </Link>
         </div>
       </div>
     </section>

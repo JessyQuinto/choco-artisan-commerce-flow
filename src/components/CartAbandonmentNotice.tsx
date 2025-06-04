@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useCartItems } from '@/store/useStore';
-import { FadeIn, SlideIn } from './CSSAnimations';
 
 const CartAbandonmentNotice = () => {
   const [showNotice, setShowNotice] = useState(false);
@@ -76,10 +75,9 @@ const CartAbandonmentNotice = () => {
   };
 
   if (!showNotice || items.length === 0) return null;
-
   return (
-    <FadeIn className="fixed bottom-4 right-4 z-50 max-w-sm">
-      <SlideIn direction="up">
+    <div className="fixed bottom-4 right-4 z-50 max-w-sm animate-in fade-in duration-300">
+      <div className="animate-in slide-in-from-bottom duration-500">
         <Card className="p-4 shadow-lg border-l-4 border-l-orange-500 bg-gradient-to-r from-orange-50 to-amber-50">
           <div className="flex items-start justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -131,8 +129,8 @@ const CartAbandonmentNotice = () => {
             </div>
           </div>
         </Card>
-      </SlideIn>
-    </FadeIn>
+      </div>
+    </div>
   );
 };
 

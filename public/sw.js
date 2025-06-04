@@ -9,10 +9,11 @@ const urlsToCache = [
 
 // Install event
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
+  event.waitUntil(    caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Opened cache');
+        if (self.location.hostname === 'localhost') {
+          console.log('Opened cache');
+        }
         return cache.addAll(urlsToCache);
       })
   );
@@ -63,10 +64,11 @@ self.addEventListener('fetch', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
+      return Promise.all(        cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
+            if (self.location.hostname === 'localhost') {
+              console.log('Deleting old cache:', cacheName);
+            }
             return caches.delete(cacheName);
           }
         })
@@ -94,9 +96,10 @@ async function syncCartData() {
           'Content-Type': 'application/json'
         }
       });
+    }  } catch (error) {
+    if (self.location.hostname === 'localhost') {
+      console.log('Cart sync failed:', error);
     }
-  } catch (error) {
-    console.log('Cart sync failed:', error);
   }
 }
 

@@ -70,39 +70,22 @@ interface Store {
   filters: SearchFilters;
   isLoading: boolean;
   error: string | null;
-  
-  // Cart actions
+    // Cart actions
   addToCart: (product: Product, quantity?: number) => void;
   removeFromCart: (productId: number) => void;
   updateCartQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
-  getCartTotal: () => number;
-  
-  // Auth actions
+    // Auth actions
   login: (userData: User, token?: string) => void;
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
-  setAuthLoading: (loading: boolean) => void;
-  
-  // Wishlist actions
+    // Wishlist actions
   addToWishlist: (product: Product) => void;
   removeFromWishlist: (productId: number) => void;
-  isInWishlist: (productId: number) => boolean;
-  clearWishlist: () => void;
   
   // UI actions
   setSearchQuery: (query: string) => void;
   updateFilters: (filters: Partial<SearchFilters>) => void;
-  resetFilters: () => void;
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-  
-  // Order actions
-  completeOrder: () => void;
-  
-  // Utility actions
-  clearUserData: () => void;
-  getStorageStats: () => { cartItems: number; wishlistItems: number; };
 }
 
 const initialFilters: SearchFilters = {
@@ -209,14 +192,8 @@ export const useStore = create<Store>()(
           cartTotal: newTotal
         });
       },
-      
-      clearCart: () => {
+        clearCart: () => {
         set({ cartItems: [], cartCount: 0, cartTotal: 0 });
-      },
-      
-      getCartTotal: () => {
-        const { cartItems } = get();
-        return cartItems.reduce((sum, item) => sum + item.total, 0);
       },
       
       // Auth actions - Simplified without API calls
@@ -242,8 +219,7 @@ export const useStore = create<Store>()(
           }
         });
       },
-      
-      updateUser: (userData) => {
+        updateUser: (userData) => {
         const { auth } = get();
         if (auth.user) {
           set({
@@ -254,14 +230,7 @@ export const useStore = create<Store>()(
           });
         }
       },
-      
-      setAuthLoading: (loading) => {
-        const { auth } = get();
-        set({
-          auth: { ...auth, isLoading: loading }
-        });
-      },
-      
+
       // Wishlist actions
       addToWishlist: (product) => {
         const { wishlist } = get();
@@ -269,19 +238,9 @@ export const useStore = create<Store>()(
           set({ wishlist: [...wishlist, product] });
         }
       },
-      
-      removeFromWishlist: (productId) => {
+        removeFromWishlist: (productId) => {
         const { wishlist } = get();
         set({ wishlist: wishlist.filter(item => item.id !== productId) });
-      },
-      
-      isInWishlist: (productId) => {
-        const { wishlist } = get();
-        return wishlist.some(item => item.id === productId);
-      },
-      
-      clearWishlist: () => {
-        set({ wishlist: [] });
       },
       
       // UI actions
@@ -292,43 +251,6 @@ export const useStore = create<Store>()(
       updateFilters: (newFilters) => {
         const { filters } = get();
         set({ filters: { ...filters, ...newFilters } });
-      },
-      
-      resetFilters: () => {
-        set({ filters: initialFilters, searchQuery: '' });
-      },
-      
-      setLoading: (loading) => {
-        set({ isLoading: loading });
-      },
-      
-      setError: (error) => {
-        set({ error });
-      },
-      
-      // Order actions
-      completeOrder: () => {
-        set({ cartItems: [], cartCount: 0, cartTotal: 0 });
-      },
-      
-      // Utility actions
-      clearUserData: () => {
-        get().logout();
-        get().clearCart();
-        get().clearWishlist();
-        set({ 
-          searchQuery: '', 
-          filters: initialFilters,
-          error: null 
-        });
-      },
-      
-      getStorageStats: () => {
-        const { cartItems, wishlist } = get();
-        return {
-          cartItems: cartItems.length,
-          wishlistItems: wishlist.length
-        };
       }
     }),
     {
@@ -350,6 +272,4 @@ export const useAuth = () => useStore(state => state.auth);
 export const useCartItems = () => useStore(state => state.cartItems);
 export const useCartCount = () => useStore(state => state.cartCount);
 export const useCartTotal = () => useStore(state => state.cartTotal);
-export const useCart = () => useStore(state => state.cartItems);
 export const useWishlist = () => useStore(state => state.wishlist);
-export const useFilters = () => useStore(state => state.filters);

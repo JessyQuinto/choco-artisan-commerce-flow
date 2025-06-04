@@ -17,7 +17,8 @@ const ProductDetail = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
 
-  const { addToCart, addToWishlist, removeFromWishlist, isInWishlist } = useStore();
+  const { addToCart, addToWishlist, removeFromWishlist } = useStore();
+  const wishlist = useStore(state => state.wishlist);
   const { showSuccess } = useNotifications();
 
   // Mock product data - to be replaced with API call
@@ -45,7 +46,7 @@ const ProductDetail = () => {
     reviews: 24
   };
 
-  const inWishlist = isInWishlist(product.id);
+  const inWishlist = wishlist.some(item => item.id === product.id);
 
   const handleAddToCart = () => {
     addToCart(product, quantity);

@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 
 export interface ValidationRule {
@@ -25,38 +24,26 @@ export const useValidation = (schema: ValidationSchema) => {
     const rule = schema[name];
     if (!rule) return null;
 
-    // Required validation
     if (rule.required && (!value || (typeof value === 'string' && value.trim() === ''))) {
       return 'Este campo es requerido';
     }
 
-    // Skip other validations if field is empty and not required
     if (!value || (typeof value === 'string' && value.trim() === '')) {
       return null;
     }
 
-    // Min length validation
     if (rule.minLength && value.length < rule.minLength) {
       return `Debe tener al menos ${rule.minLength} caracteres`;
     }
 
-    // Max length validation
     if (rule.maxLength && value.length > rule.maxLength) {
-      return `No puede tener más de ${rule.maxLength} caracteres`;
+      return `Debe tener máximo ${rule.maxLength} caracteres`;
     }
 
-    // Pattern validation
     if (rule.pattern && !rule.pattern.test(value)) {
-      if (name === 'email') {
-        return 'Por favor ingresa un email válido';
-      }
-      if (name === 'phone') {
-        return 'Por favor ingresa un teléfono válido';
-      }
       return 'Formato inválido';
     }
 
-    // Custom validation
     if (rule.custom) {
       return rule.custom(value);
     }
@@ -64,19 +51,27 @@ export const useValidation = (schema: ValidationSchema) => {
     return null;
   }, [schema]);
 
-  const validate = useCallback((data: { [key: string]: any }): boolean => {
+  const validate = useCallback((data: any): boolean => {
     const newErrors: ValidationErrors = {};
     let isValid = true;
 
-    Object.keys(schema).forEach(fieldName => {
-      const error = validateField(fieldName, data[fieldName]);
+    Object.keys(schema).forEach(name => {
+      const error = validateField(name, data[name]);
       if (error) {
-        newErrors[fieldName] = error;
+        newErrors[name] = error;
         isValid = false;
       }
     });
 
     setErrors(newErrors);
+    setTouched(prev => {
+      const newTouched = { ...prev };
+      Object.keys(schema).forEach(name => {
+        newTouched[name] = true;
+      });
+      return newTouched;
+    });
+
     return isValid;
   }, [schema, validateField]);
 
@@ -103,10 +98,6 @@ export const useValidation = (schema: ValidationSchema) => {
     setTouched({});
   }, []);
 
-  const setFieldTouched = useCallback((name: string, isTouched: boolean = true) => {
-    setTouched(prev => ({ ...prev, [name]: isTouched }));
-  }, []);
-
   return {
     errors,
     touched,
@@ -114,7 +105,6 @@ export const useValidation = (schema: ValidationSchema) => {
     validateSingle,
     clearError,
     clearAllErrors,
-    setFieldTouched,
     hasErrors: Object.keys(errors).length > 0,
     getFieldError: (name: string) => errors[name],
     isFieldTouched: (name: string) => touched[name] || false
@@ -126,7 +116,6 @@ export const ValidationPatterns = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   phone: /^[\+]?[1-9][\d]{0,15}$/,
   password: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,}$/,
-  zipCode: /^\d{5}(-\d{4})?$/,
   url: /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/
 };
 
@@ -142,13 +131,8 @@ export const CommonSchemas = {
       minLength: 6
     }
   },
-  register: {
-    firstName: {
-      required: true,
-      minLength: 2,
-      maxLength: 50
-    },
-    lastName: {
+  contact: {
+    name: {
       required: true,
       minLength: 2,
       maxLength: 50
@@ -157,55 +141,10 @@ export const CommonSchemas = {
       required: true,
       pattern: ValidationPatterns.email
     },
-    password: {
+    message: {
       required: true,
-      minLength: 8,
-      pattern: ValidationPatterns.password
-    },
-    confirmPassword: {
-      required: true,
-      custom: (value: string, formData?: any) => {
-        if (formData && value !== formData.password) {
-          return 'Las contraseñas no coinciden';
-        }
-        return null;
-      }
-    }
-  },
-  profile: {
-    firstName: {
-      required: true,
-      minLength: 2,
-      maxLength: 50
-    },
-    lastName: {
-      required: true,
-      minLength: 2,
-      maxLength: 50
-    },
-    email: {
-      required: true,
-      pattern: ValidationPatterns.email
-    },
-    phone: {
-      pattern: ValidationPatterns.phone
-    }
-  },
-  checkout: {
-    street: {
-      required: true,
-      minLength: 5
-    },
-    city: {
-      required: true,
-      minLength: 2
-    },
-    state: {
-      required: true
-    },
-    zipCode: {
-      required: true,
-      pattern: ValidationPatterns.zipCode
+      minLength: 10,
+      maxLength: 500
     }
   }
 };

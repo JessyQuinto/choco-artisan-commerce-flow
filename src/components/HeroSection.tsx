@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { useStore } from "@/store/useStore";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
@@ -38,7 +38,7 @@ const HeroSection = () => {
               className="bg-primary-action hover:bg-primary-action/90 text-white px-12 py-6 text-xl font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
               asChild
             >
-              <a href="/shop">Explorar Tienda</a>
+              <Link to="/shop">Explorar Tienda</Link>
             </Button>
             <Button 
               variant="outline" 
@@ -46,7 +46,7 @@ const HeroSection = () => {
               className="border-2 border-white text-white hover:bg-white hover:text-primary-text px-12 py-6 text-xl font-semibold rounded-lg transition-all duration-300 bg-transparent backdrop-blur-sm shadow-lg"
               asChild
             >
-              <a href="/stories">Conoce las Historias</a>
+              <Link to="/stories">Conoce las Historias</Link>
             </Button>
           </div>
         </div>

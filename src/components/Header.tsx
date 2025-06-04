@@ -14,28 +14,23 @@ const Header = () => {
   const { user, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
       setIsSearchOpen(false);
-      closeMenu();
+      setIsMenuOpen(false);
     }
   };
 
   const handleLogout = () => {
     logout();
     navigate('/');
-    closeMenu();
+    setIsMenuOpen(false);
   };
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -43,6 +38,39 @@ const Header = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     closeMenu();
+  };
+
+  const navLinks = [
+    { to: "/", label: "Inicio" },
+    { to: "/shop", label: "Tienda" },
+    { action: () => scrollToSection('historias'), label: "Historias" },
+    { to: "/about", label: "Sobre Nosotros" },
+    { to: "/contact", label: "Contacto" }
+  ];
+
+  const renderNavLink = (link: typeof navLinks[0], isMobile = false) => {
+    const className = `text-primary hover:text-action font-medium transition-colors ${
+      isMobile ? 'py-2' : ''
+    }`;
+    
+    if (link.action) {
+      return (
+        <button key={link.label} onClick={link.action} className={`${className} ${isMobile ? 'text-left' : ''}`}>
+          {link.label}
+        </button>
+      );
+    }
+    
+    return (
+      <Link
+        key={link.label}
+        to={link.to!}
+        className={className}
+        onClick={isMobile ? closeMenu : undefined}
+      >
+        {link.label}
+      </Link>
+    );
   };
 
   return (
@@ -64,24 +92,7 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8">
-            <Link to="/" className="text-primary hover:text-action font-medium transition-colors">
-              Inicio
-            </Link>
-            <Link to="/shop" className="text-primary hover:text-action font-medium transition-colors">
-              Tienda
-            </Link>
-            <button 
-              onClick={() => scrollToSection('historias')}
-              className="text-primary hover:text-action font-medium transition-colors"
-            >
-              Historias
-            </button>
-            <Link to="/about" className="text-primary hover:text-action font-medium transition-colors">
-              Sobre Nosotros
-            </Link>
-            <Link to="/contact" className="text-primary hover:text-action font-medium transition-colors">
-              Contacto
-            </Link>
+            {navLinks.map(link => renderNavLink(link))}
           </nav>
 
           {/* Search Desktop */}
@@ -222,40 +233,7 @@ const Header = () => {
         {isMenuOpen && (
           <div className="lg:hidden border-t border-secondary/20 py-4 bg-background">
             <nav className="flex flex-col space-y-3">
-              <Link 
-                to="/" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
-                onClick={closeMenu}
-              >
-                Inicio
-              </Link>
-              <Link 
-                to="/shop" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
-                onClick={closeMenu}
-              >
-                Tienda
-              </Link>
-              <button 
-                onClick={() => scrollToSection('historias')}
-                className="text-primary hover:text-action font-medium py-2 transition-colors text-left"
-              >
-                Historias
-              </button>
-              <Link 
-                to="/about" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
-                onClick={closeMenu}
-              >
-                Sobre Nosotros
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-primary hover:text-action font-medium py-2 transition-colors"
-                onClick={closeMenu}
-              >
-                Contacto
-              </Link>
+              {navLinks.map(link => renderNavLink(link, true))}
               
               {/* Auth Section in Mobile Menu */}
               <div className="border-t border-secondary/20 pt-3 mt-2">
